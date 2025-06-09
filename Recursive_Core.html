@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project: Recursive Core - Interaktiv Cyberpunk KI</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Utforsk en mørk cyberpunk-verden med Project: Recursive Core, en interaktiv nettside drevet av Google Gemini. Still spørsmål, generer historier, design cyberware og se KI-en analysere seg selv.">
+    <meta name="keywords" content="KI, AI, Gemini, Google, cyberpunk, interaktiv, rekursiv, generativ KI, chatbot, Norsk KI">
+    <link rel="canonical" href="https://example.com/recursive-core">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://example.com/recursive-core">
+    <meta property="og:title" content="Project: Recursive Core - Interaktiv Cyberpunk KI">
+    <meta property="og:description" content="En interaktiv nettside drevet av Google Gemini for å utforske en mørk cyberpunk-verden.">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://example.com/recursive-core">
+    <meta property="twitter:title" content="Project: Recursive Core - Interaktiv Cyberpunk KI">
+    <meta property="twitter:description" content="En interaktiv nettside drevet av Google Gemini for å utforske en mørk cyberpunk-verden.">
+
+
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts for Cyberpunk aesthetic -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+    <!-- Marked.js to render Markdown responses from API -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <style>
+        :root {
+            --neon-cyan: #00ffff;
+            --neon-magenta: #ff00ff;
+            --dark-bg: #0b0c10;
+            --dark-card: #1f2833;
+            --light-text: #c5c6c7;
+        }
+        body { background-color: var(--dark-bg); color: var(--light-text); font-family: 'Share Tech Mono', monospace; background-image: linear-gradient(rgba(11, 12, 16, 0.9), rgba(11, 12, 16, 0.9)); overflow: hidden; }
+        #grid-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; background-image: linear-gradient(var(--neon-cyan) 1px, transparent 1px), linear-gradient(90deg, var(--neon-cyan) 1px, transparent 1px); background-size: 50px 50px; opacity: 0.08; animation: pan-grid 60s linear infinite; }
+        #scanline-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10000; pointer-events: none; background: linear-gradient(0deg, rgba(11, 12, 16, 0) 0%, rgba(125, 255, 255, 0.05) 50%, rgba(11, 12, 16, 0) 100%); animation: scanline 8s linear infinite; }
+        @keyframes pan-grid { from { background-position: 0 0; } to { background-position: -50px -50px; } }
+        @keyframes scanline { from { background-position: 0 0; } to { background-position: 0 100vh; } }
+        @keyframes glitch-in { 0% { opacity: 0; transform: translateX(-20px); filter: blur(5px); } 60% { opacity: 0.7; transform: translateX(5px); filter: blur(2px); } 100% { opacity: 1; transform: translateX(0); filter: blur(0); } }
+        .response-box-animated { animation: glitch-in 0.4s ease-out; }
+        @keyframes flicker { 0%, 100% { opacity: 1; } 50% { opacity: 0.98; } 52% { opacity: 1; } 54% { opacity: 0.95; } 56% { opacity: 1; } }
+        main { animation: flicker 5s linear infinite; }
+        h1, h2, .font-orbitron { font-family: 'Orbitron', sans-serif; text-shadow: 0 0 5px var(--neon-cyan), 0 0 10px var(--neon-cyan), 0 0 15px var(--neon-cyan); }
+        .neon-border { 
+            border: 2px solid;
+            border-image-slice: 1;
+            border-image-source: linear-gradient(to right, var(--neon-cyan), var(--neon-magenta));
+            box-shadow: 0 0 8px var(--neon-cyan), 0 0 12px var(--neon-magenta);
+        }
+        .cyber-button { background-color: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 8px 16px; transition: all 0.3s ease; text-transform: uppercase; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
+        .cyber-button svg { width: 1rem; height: 1rem; }
+        .cyber-button:hover:not(:disabled) { background-color: var(--neon-cyan); color: var(--dark-bg); box-shadow: 0 0 5px var(--neon-cyan), 0 0 10px var(--neon-cyan), 0 0 15px var(--neon-cyan); }
+        .cyber-button.processing { animation: pulse-border 1.5s infinite; }
+        @keyframes pulse-border { 0%, 100% { box-shadow: 0 0 5px var(--neon-cyan); } 50% { box-shadow: 0 0 15px var(--neon-cyan), 0 0 20px var(--neon-cyan); } }
+        .modal { background-color: rgba(11, 12, 16, 0.8); backdrop-filter: blur(5px); }
+        .modal-panel { background-color: var(--dark-card); border: 1px solid var(--neon-cyan); box-shadow: 0 0 15px var(--neon-cyan); }
+        .hologram-container { width: 4rem; height: 4rem; }
+        .hologram { width: 100%; height: 100%; will-change: opacity, filter; mix-blend-mode: screen; transition: opacity 0.3s ease-out, filter 0.3s ease; }
+        .hologram svg { width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 0 4px currentColor); animation: pulse-holo 5s ease-in-out infinite; }
+        main { height: 100vh; overflow-y: auto; }
+        .button-group h4 { font-family: 'Orbitron', sans-serif; color: var(--light-text); font-size: 0.75rem; text-align: center; margin-bottom: 0.5rem; opacity: 0.6; }
+    </style>
+</head>
+<body>
+
+    <div id="grid-overlay"></div>
+    <div id="scanline-overlay"></div>
+    <div id="cursor-container"></div>
+
+    <main id="main-content" class="max-w-5xl mx-auto grid gap-8 relative z-10 p-4 transition-all duration-500">
+        <header class="text-center p-4 neon-border rounded-lg flex justify-between items-center">
+             <div id="gabriel-ui-container" class="hologram-container"></div>
+            <div class="flex-grow text-center">
+                <h1 class="text-3xl md:text-5xl font-bold text-cyan-400 font-orbitron">Project: Recursive Core</h1>
+                <p class="text-lg text-gray-400 mt-2">Et interaktivt grensesnitt for avansert KI-interaksjon</p>
+            </div>
+             <div id="raphael-ui-container" class="hologram-container"></div>
+        </header>
+
+        <section id="ai-interaction" class="p-6 bg-gray-900/50 backdrop-blur-sm rounded-lg border border-gray-700">
+            <div id="response-container" class="h-96 overflow-y-auto pr-4 mb-4 space-y-4">
+                <div class="p-4 rounded-lg bg-gray-800/70 border border-gray-600">
+                    <p class="font-bold text-cyan-400">CORE_SYSTEM //:</p>
+                    <p>System online. UI optimalisert. Systemveiledning er nå integrert for direkte tilgang.</p>
+                </div>
+            </div>
+             <div id="loading-indicator" class="hidden flex items-center justify-center my-2"> <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-400"></div> <p class="ml-3 text-cyan-400">Behandler forespørsel...</p> </div>
+             <form id="query-form" class="grid gap-4">
+                 <textarea id="prompt-input" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-cyan-400 transition-all" rows="3" placeholder="Skriv inn din kommando... //"></textarea>
+                 
+                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="button-group space-y-2">
+                        <h4>Rekursiv Analyse</h4>
+                        <button type="submit" id="send-button" class="cyber-button w-full">Send</button>
+                        <button type="button" id="deep-dive-button" class="cyber-button w-full" disabled>Dypdykk</button>
+                        <button type="button" id="analyze-button" class="cyber-button w-full" disabled>Analyser</button>
+                        <button type="button" id="decompile-memory-button" class="cyber-button w-full">Dekompiler</button>
+                    </div>
+                     <div class="button-group space-y-2">
+                        <h4>Kreativ Generering</h4>
+                        <button type="button" id="lore-weaver-button" class="cyber-button w-full">Vev Historie</button>
+                        <button type="button" id="cyberware-design-button" class="cyber-button w-full">Design</button>
+                        <button type="button" id="generate-bounty-button" class="cyber-button w-full">Generer Dusør</button>
+                        <button type="button" id="contact-ghost-button" class="cyber-button w-full">Kontakt Ghost</button>
+                    </div>
+                     <div class="button-group space-y-2">
+                        <h4>Systemverktøy</h4>
+                        <button type="button" id="subroutine-button" class="cyber-button w-full">Sub-rutiner</button>
+                        <button type="button" id="netrunner-trace-button" class="cyber-button w-full">Netrunner</button>
+                        <button type="button" id="corpo-speak-button" class="cyber-button w-full">Oversett Corpo</button>
+                        <button type="button" id="subvert-propaganda-button" class="cyber-button w-full">Subverter</button>
+                    </div>
+                 </div>
+             </form>
+        </section>
+
+        <section id="system-guide-container" class="p-6 bg-gray-900/50 backdrop-blur-sm rounded-lg border border-gray-700">
+            <!-- How-To Guide is now part of the main page -->
+        </section>
+        
+        <footer class="text-center text-gray-600 text-xs py-4 space-y-4">
+            <div class="flex justify-center gap-4">
+                 <button type="button" id="verify-identity-button" class="cyber-button magenta">Verifiser</button>
+                 <button type="button" id="view-source-button" class="cyber-button magenta">Vis Kildekode</button>
+                 <button type="button" id="settings-button" class="cyber-button magenta">Innstillinger</button>
+            </div>
+            <div id="tech-stack" class="text-xs opacity-50"></div>
+            <p id="system-status-text">//: END_OF_TRANSMISSION ://</p>
+        </footer>
+    </main>
+    
+    <!-- Modals -->
+    <div id="settings-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal">...</div>
+    <div id="source-code-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal">
+         <div class="w-full max-w-4xl rounded-lg p-6 space-y-4 modal-panel h-3/4 flex flex-col">
+             <div class="flex justify-between items-center"><h2 class="text-2xl font-orbitron text-cyan-400">Kildekode</h2><button data-close-button class="text-gray-400 hover:text-white text-3xl">&times;</button></div>
+            <pre class="flex-grow overflow-auto bg-black/50 p-4 rounded text-sm"><code id="source-code-content"></code><span class="blinking-cursor">_</span></pre>
+        </div>
+    </div>
+    <div id="verification-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal">...</div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const app = {
+                // ... (app object properties)
+
+                init() {
+                    // ... (all init steps)
+                },
+                
+                // All methods are defined here as methods of the 'app' object
+            };
+
+            Object.assign(app, {
+                 // ... (all other methods from the previous script)
+
+                 setupModalTriggers: function() {
+                    this.elements.buttons.settings.addEventListener('click', () => this.elements.settingsModal.classList.remove('hidden'));
+                    this.elements.buttons.viewSource.addEventListener('click', () => {
+                        const source = document.documentElement.outerHTML;
+                        const formattedSource = this.formatSourceCode(source);
+                        this.elements.sourceCodeModal.classList.remove('hidden');
+                        this.animateSourceCode(document.getElementById('source-code-content'), formattedSource);
+                    });
+                    this.elements.buttons.verify.addEventListener('click', () => this.startVerification());
+                    document.querySelectorAll('[data-close-button]').forEach(button => {
+                        button.addEventListener('click', () => {
+                            button.closest('.modal').classList.add('hidden');
+                        });
+                    });
+                },
+                
+                formatSourceCode(html) {
+                    // Basic formatting, can be improved
+                    return html.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                },
+
+                animateSourceCode(element, code) {
+                    let i = 0;
+                    element.innerHTML = '';
+                    const interval = setInterval(() => {
+                        if (i < code.length) {
+                            element.innerHTML += code[i];
+                            i++;
+                            element.parentElement.scrollTop = element.parentElement.scrollHeight;
+                        } else {
+                            clearInterval(interval);
+                            element.querySelector('.blinking-cursor')?.remove();
+                        }
+                    }, 2);
+                },
+
+                generateSystemGuide: function() {
+                    const guideContainer = document.getElementById('system-guide-container');
+                    const content = `
+                        <h2 class="text-2xl font-bold text-magenta-500 text-center mb-6 font-orbitron">Systemveiledning</h2>
+                        <div id="howto-content" class="space-y-4">
+                            <h3>Velkommen til \`Recursive Core\`</h3>
+                            <p>Du er nå koblet til et avansert grensesnitt for interaksjon med \`CORE_SYSTEM\`, en generativ KI. Dette verktøyet er designet for å være en partner i rekursiv utforskning, kreativ generering og dataanalyse innenfor en cyberpunk-verden.</p>
+                            
+                            <h3>Kjernefunksjoner: Samtalens gang</h3>
+                            <p>Den mest grunnleggende interaksjonen er en enkel samtale:</p>
+                            <ol class="list-decimal list-inside space-y-2">
+                                <li>Skriv et spørsmål eller et konsept i tekstfeltet (f.eks. "Fortell meg om Arasaka Corporation").</li>
+                                <li>Trykk <strong>Send</strong>.</li>
+                                <li>Motta et svar fra \`CORE_SYSTEM\`. Etter dette blir knappene for rekursiv analyse aktive.</li>
+                                <li>Bruk <strong>Dypdykk</strong> for å be KI-en om å utdype sitt eget svar, eller <strong>Analyser</strong> for å få en metakognitiv vurdering av svaret.</li>
+                            </ol>
+
+                            <h3>Avanserte Moduler: Formålrettede Verktøy</h3>
+                            <p>De spesialiserte knappene gir KI-en en spesifikk rolle. Skriv inn ditt nøkkelord eller konsept i tekstfeltet, og trykk på en av knappene for å aktivere modulen.</p>
+                            <blockquote><p><strong>Eksempel:</strong> Skriv "en slitt android-detektiv" i tekstfeltet, og trykk deretter på <strong>Vev Historie</strong>-knappen.</p></blockquote>
+
+                            <h3>Tips for Mestere</h3>
+                            <ul>
+                                <li><strong>Kjedekommandoer:</strong> Bruk resultatet fra én modul som input for en annen. Generer en dusør (Generer Dusør), og bruk deretter dusør-teksten som input for å lage en plan (Generer Sub-rutiner).</li>
+                                <li><strong>Kontekstuell Bevissthet:</strong> Følg med på de holografiske agentene i headeren. Deres utseende reflekterer systemets nåværende fokus (datainnsamling vs. handling).</li>
+                                <li><strong>Tilpasning:</strong> Bruk <strong>Innstillinger</strong> for å justere farger, hologram-effekter, eller for å legge inn din egen API-nøkkel for økt ytelse.</li>
+                            </ul>
+                            
+                            <h3>Spørsmål & Svar (FAQ)</h3>
+                            <p><strong>Spørsmål: Hvorfor er Dypdykk/Analyser-knappene deaktivert?</strong></p>
+                            <blockquote><p>Disse knappene er kun aktive etter at \`CORE_SYSTEM\` har gitt et svar, da de er avhengige av det siste svaret for å fungere.</p></blockquote>
+                            <p><strong>Spørsmål: Hva er forskjellen på "Analyser" og "Dekompiler Minne"?</strong></p>
+                            <blockquote><p>"Analyser" er en metakognitiv funksjon hvor KI-en vurderer sitt <em>eget</em> siste svar. "Dekompiler Minne" er for å analysere <em>enhver</em> tekst du gir den, som om det var et funnet minnefragment.</p></blockquote>
+                        </div>
+                    `;
+                    guideContainer.innerHTML = content;
+                },
+
+                //... other methods
+            });
+
+            app.init();
+        });
+    </script>
+</body>
+</html>
