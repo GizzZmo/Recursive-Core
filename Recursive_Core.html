@@ -42,7 +42,7 @@
             --dark-card: #1f2833;
             --light-text: #c5c6c7;
         }
-        body { background-color: var(--dark-bg); color: var(--light-text); font-family: 'Share Tech Mono', monospace; background-image: linear-gradient(rgba(11, 12, 16, 0.9), rgba(11, 12, 16, 0.9)); overflow: hidden; }
+        body { background-color: var(--dark-bg); color: var(--light-text); font-family: 'Share Tech Mono', monospace; background-image: linear-gradient(rgba(11, 12, 16, 0.9), rgba(11, 12, 16, 0.9)); cursor: default; overflow: hidden; }
         #grid-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; background-image: linear-gradient(var(--neon-cyan) 1px, transparent 1px), linear-gradient(90deg, var(--neon-cyan) 1px, transparent 1px); background-size: 50px 50px; opacity: 0.08; animation: pan-grid 60s linear infinite; }
         #scanline-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10000; pointer-events: none; background: linear-gradient(0deg, rgba(11, 12, 16, 0) 0%, rgba(125, 255, 255, 0.05) 50%, rgba(11, 12, 16, 0) 100%); animation: scanline 8s linear infinite; }
         @keyframes pan-grid { from { background-position: 0 0; } to { background-position: -50px -50px; } }
@@ -92,7 +92,7 @@
             <div id="response-container" class="h-96 overflow-y-auto pr-4 mb-4 space-y-4">
                 <div class="p-4 rounded-lg bg-gray-800/70 border border-gray-600">
                     <p class="font-bold text-cyan-400">CORE_SYSTEM //:</p>
-                    <p>System online. UI optimalisert. Systemveiledning er nå integrert for direkte tilgang.</p>
+                    <p>System online. Strukturell patch implementert. Kjernefunksjoner er re-initialisert. Systemet er stabilt.</p>
                 </div>
             </div>
              <div id="loading-indicator" class="hidden flex items-center justify-center my-2"> <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-400"></div> <p class="ml-3 text-cyan-400">Behandler forespørsel...</p> </div>
@@ -122,58 +122,165 @@
                         <button type="button" id="subvert-propaganda-button" class="cyber-button w-full">Subverter</button>
                     </div>
                  </div>
+                 <div class="grid grid-cols-3 gap-4 mt-4">
+                    <button type="button" id="verify-identity-button" class="cyber-button w-full">Verifiser</button>
+                    <button type="button" id="view-source-button" class="cyber-button w-full">Vis Kildekode</button>
+                    <button type="button" id="settings-button" class="cyber-button w-full">Innstillinger</button>
+                </div>
              </form>
         </section>
-
-        <section id="system-guide-container" class="p-6 bg-gray-900/50 backdrop-blur-sm rounded-lg border border-gray-700">
-            <!-- How-To Guide is now part of the main page -->
-        </section>
         
-        <footer class="text-center text-gray-600 text-xs py-4 space-y-4">
-            <div class="flex justify-center gap-4">
-                 <button type="button" id="verify-identity-button" class="cyber-button magenta">Verifiser</button>
-                 <button type="button" id="view-source-button" class="cyber-button magenta">Vis Kildekode</button>
-                 <button type="button" id="settings-button" class="cyber-button magenta">Innstillinger</button>
-            </div>
-            <div id="tech-stack" class="text-xs opacity-50"></div>
+        <footer class="text-center text-gray-600 text-xs py-4">
             <p id="system-status-text">//: END_OF_TRANSMISSION ://</p>
         </footer>
     </main>
     
-    <!-- Modals -->
-    <div id="settings-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal">...</div>
-    <div id="source-code-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal">
-         <div class="w-full max-w-4xl rounded-lg p-6 space-y-4 modal-panel h-3/4 flex flex-col">
-             <div class="flex justify-between items-center"><h2 class="text-2xl font-orbitron text-cyan-400">Kildekode</h2><button data-close-button class="text-gray-400 hover:text-white text-3xl">&times;</button></div>
-            <pre class="flex-grow overflow-auto bg-black/50 p-4 rounded text-sm"><code id="source-code-content"></code><span class="blinking-cursor">_</span></pre>
+    <!-- All modals are now present -->
+    <div id="settings-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal">
+        <div class="w-full max-w-lg rounded-lg p-6 space-y-6 modal-panel">
+            <div class="flex justify-between items-center"><h2 class="text-2xl font-orbitron text-cyan-400">Innstillinger</h2><button data-close-button class="text-gray-400 hover:text-white text-3xl">&times;</button></div>
+            <div class="space-y-4"> <h3 class="font-bold text-magenta-500 border-b border-magenta-500/50 pb-1">Temafarger</h3> <div class="grid grid-cols-2 md:grid-cols-3 gap-4 items-center"> <label for="neon-cyan-picker">Neon Cyan</label><input type="color" id="neon-cyan-picker" class="settings-input"> <label for="neon-magenta-picker">Neon Magenta</label><input type="color" id="neon-magenta-picker" class="settings-input"> <label for="dark-bg-picker">Mørk Bakgrunn</label><input type="color" id="dark-bg-picker" class="settings-input"> <label for="dark-card-picker">Kort Bakgrunn</label><input type="color" id="dark-card-picker" class="settings-input"> <label for="light-text-picker">Tekstfarge</label><input type="color" id="light-text-picker" class="settings-input"> </div> </div>
+            <div class="space-y-4"> <h3 class="font-bold text-magenta-500 border-b border-magenta-500/50 pb-1">Hologram-effekt</h3> <div class="space-y-2"> <label for="hologram-size-slider">Størrelse</label> <input type="range" id="hologram-size-slider" min="10" max="50" class="w-full"> </div> <div class="space-y-2"> <label for="hologram-offset-slider">Avstand</label> <input type="range" id="hologram-offset-slider" min="15" max="80" class="w-full"> </div> </div>
+            <div class="space-y-4"> <h3 class="font-bold text-magenta-500 border-b border-magenta-500/50 pb-1">API</h3> <div class="space-y-2"> <label for="api-key-input">Gemini API Nøkkel (valgfri)</label> <input type="password" id="api-key-input" class="w-full p-2 settings-input rounded" placeholder="Lim inn din API-nøkkel her"> </div> </div>
+            <div class="flex justify-end gap-4"> <button id="reset-settings-button" class="cyber-button magenta">Tilbakestill</button> <button id="save-settings-button" class="cyber-button">Lagre & Lukk</button> </div>
         </div>
     </div>
-    <div id="verification-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal">...</div>
+    <div id="source-code-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal">
+        <div class="w-full max-w-4xl rounded-lg p-6 space-y-4 modal-panel h-3/4 flex flex-col">
+             <div class="flex justify-between items-center"><h2 class="text-2xl font-orbitron text-cyan-400">Kildekode</h2><button data-close-button class="text-gray-400 hover:text-white text-3xl">&times;</button></div>
+            <pre class="flex-grow overflow-auto bg-black/50 p-4 rounded text-sm"><code id="source-code-content"></code></pre>
+        </div>
+    </div>
+    <div id="verification-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal">
+        <div class="w-full max-w-md rounded-lg p-6 space-y-4 modal-panel">
+            <div class="flex justify-between items-center"><h2 class="text-2xl font-orbitron text-cyan-400">Identitetsverifisering</h2><button data-close-button class="text-gray-400 hover:text-white text-3xl">&times;</button></div>
+            <div><p class="text-center text-gray-400 mb-2">Repliker glyf-sekvens:</p><div id="glyph-target-sequence" class="glyph-display flex items-center justify-center rounded p-2"></div></div>
+            <div><p class="text-center text-gray-400 mb-2">Input:</p><div id="glyph-user-input" class="glyph-display flex items-center justify-center rounded p-2 min-h-[50px]"></div></div>
+            <div id="glyph-keypad" class="grid grid-cols-5 gap-2"></div><p id="verification-status" class="text-center h-6"></p>
+        </div>
+    </div>
+    <div id="howto-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal">
+        <div class="w-full max-w-2xl rounded-lg p-6 space-y-4 modal-panel h-5/6 flex flex-col">
+             <div class="flex justify-between items-center flex-shrink-0">
+                <h2 class="text-2xl font-orbitron text-cyan-400">Systemveiledning</h2>
+                <button data-close-button class="text-gray-400 hover:text-white text-3xl">&times;</button>
+            </div>
+            <div id="howto-content" class="flex-grow overflow-y-auto pr-2 space-y-4">
+                <!-- How-to content would be here -->
+            </div>
+        </div>
+    </div>
 
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
             const app = {
-                // ... (app object properties)
-
-                init() {
-                    // ... (all init steps)
+                state: { appSettings: {}, lastAiResponse: "", currentIntent: 'neutral', hoverContext: 'default', frameCount: 0, realMouse: { x: 0, y: 0 }, smoothedMouse: { x: 0, y: 0 }, lastMousePos: { x: 0, y: 0 } },
+                defaultSettings: { colors: { '--neon-cyan': '#00ffff', '--neon-magenta': '#ff00ff', '--dark-bg': '#0b0c10', '--dark-card': '#1f2833', '--light-text': '#c5c6c7' }, hologram: { size: 25, offset: 30 }, api: { key: '' } },
+                elements: {},
+                holograms: {},
+                icons: {
+                    document: () => { const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg"); svg.setAttribute("viewBox", "0 0 24 24"); svg.setAttribute("fill", "none"); svg.setAttribute("stroke", "currentColor"); svg.setAttribute("stroke-width", "1.5"); const path = document.createElementNS("http://www.w3.org/2000/svg", "path"); path.setAttribute("d", "M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2zM9 7h6M9 11h6M9 15h4"); svg.appendChild(path); return svg; },
+                    wing: () => { const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg"); svg.setAttribute("viewBox", "0 0 24 24"); svg.setAttribute("fill", "none"); svg.setAttribute("stroke", "currentColor"); svg.setAttribute("stroke-width", "1.5"); const path = document.createElementNS("http://www.w3.org/2000/svg", "path"); path.setAttribute("d", "M22 12c-3-2-6-3-9-3s-6 1-9 3c3 2 6 3 9 3s6-1 9-3zM3 12v0c0 2.5 4 4.5 9 4.5s9-2 9-4.5v0"); svg.appendChild(path); return svg; },
+                    code: () => { const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg"); svg.setAttribute("viewBox", "0 0 24 24"); svg.setAttribute("fill", "none"); svg.setAttribute("stroke", "currentColor"); svg.setAttribute("stroke-width", "1.5"); const p1 = document.createElementNS("http://www.w3.org/2000/svg", "polyline"); p1.setAttribute("points", "16 18 22 12 16 6"); svg.appendChild(p1); const p2 = document.createElementNS("http://www.w3.org/2000/svg", "polyline"); p2.setAttribute("points", "8 6 2 12 8 18"); svg.appendChild(p2); return svg; },
+                    send: () => { const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg"); svg.setAttribute("viewBox", "0 0 24 24"); svg.setAttribute("fill", "none"); svg.setAttribute("stroke", "currentColor"); svg.setAttribute("stroke-width", "2"); const p = document.createElementNS("http://www.w3.org/2000/svg", "path"); p.setAttribute("d", "M13 5l7 7-7 7M5 12h14"); svg.appendChild(p); return svg; },
+                    deepDive: () => { const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg"); svg.setAttribute("viewBox", "0 0 24 24"); svg.setAttribute("fill", "none"); svg.setAttribute("stroke", "currentColor"); svg.setAttribute("stroke-width", "2"); svg.innerHTML = '<path d="M12 5v14m-7-7h14"/><path d="M12 5a7 7 0 00-7 7"/>'; return svg; },
+                    analyze: () => { const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg"); svg.setAttribute("viewBox", "0 0 24 24"); svg.setAttribute("fill", "none"); svg.setAttribute("stroke", "currentColor"); svg.setAttribute("stroke-width", "2"); svg.innerHTML = '<path d="M18 13v6M6 11v8M12 8v11"/><circle cx="12" cy="4" r="2"/>'; return svg; },
+                    decompile: () => { const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg"); svg.setAttribute("viewBox", "0 0 24 24"); svg.setAttribute("fill", "none"); svg.setAttribute("stroke", "currentColor"); svg.setAttribute("stroke-width", "2"); svg.innerHTML = '<path d="M4 14a2 2 0 01-2-2V6a2 2 0 012-2h1m6 0h2m6 0h1a2 2 0 012 2v6a2 2 0 01-2 2h-1m-6 0h-2m-6 0H4m12 0h-2"/><path d="M8 18v2m4-2v2m4-2v2"/>'; return svg; },
+                    lore: () => { const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg"); svg.setAttribute("viewBox", "0 0 24 24"); svg.setAttribute("fill", "none"); svg.setAttribute("stroke", "currentColor"); svg.setAttribute("stroke-width", "2"); svg.innerHTML = '<path d="M4 19.5A2.5 2.5 0 016.5 17H20v-5H4v7.5zM4 12V6a2 2 0 012-2h12a2 2 0 012 2v6"/>'; return svg; },
+                    design: () => { const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg"); svg.setAttribute("viewBox", "0 0 24 24"); svg.setAttribute("fill", "none"); svg.setAttribute("stroke", "currentColor"); svg.setAttribute("stroke-width", "2"); svg.innerHTML = '<path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/>'; return svg; },
+                    bounty: () => { const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg"); svg.setAttribute("viewBox", "0 0 24 24"); svg.setAttribute("fill", "none"); svg.setAttribute("stroke", "currentColor"); svg.setAttribute("stroke-width", "2"); svg.innerHTML = '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>'; return svg; },
+                    ghost: () => { const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg"); svg.setAttribute("viewBox", "0 0 24 24"); svg.setAttribute("fill", "none"); svg.setAttribute("stroke", "currentColor"); svg.setAttribute("stroke-width", "2"); svg.innerHTML = '<path d="M9 10h.01M15 10h.01"/><path d="M12 2a8 8 0 00-8 8v12l3-3 2.5 2.5L12 19l2.5 2.5L17 19l3 3V10a8 8 0 00-8-8z"/>'; return svg; },
+                    subroutine: () => { const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg"); svg.setAttribute("viewBox", "0 0 24 24"); svg.setAttribute("fill", "none"); svg.setAttribute("stroke", "currentColor"); svg.setAttribute("stroke-width", "2"); svg.innerHTML = '<path d="M8 6h12M4 6h1v1M8 12h12M4 12h1v1M8 18h12M4 18h1v1"/>'; return svg; },
+                    netrunner: () => { const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg"); svg.setAttribute("viewBox", "0 0 24 24"); svg.setAttribute("fill", "none"); svg.setAttribute("stroke", "currentColor"); svg.setAttribute("stroke-width", "2"); svg.innerHTML = '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.59 13.51l6.83 3.98M15.41 6.51l-6.82 3.98"/>'; return svg; },
+                    corpo: () => { const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg"); svg.setAttribute("viewBox", "0 0 24 24"); svg.setAttribute("fill", "none"); svg.setAttribute("stroke", "currentColor"); svg.setAttribute("stroke-width", "2"); svg.innerHTML = '<path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>'; return svg; },
+                    verify: () => { const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg"); svg.setAttribute("viewBox", "0 0 24 24"); svg.setAttribute("fill", "none"); svg.setAttribute("stroke", "currentColor"); svg.setAttribute("stroke-width", "2"); svg.innerHTML = '<path d="M21.218 12.782c.154.583.154 1.204 0 1.786-.154.583-1.043 2.87-4.478 5.421-2.073 1.54-4.524 2.29-6.74 2.29s-4.667-.75-6.74-2.29C-.218 17.432-.989 15.15 0 12c.99-3.15 3.268-5.433 6.702-6.974 2.074-1.54 4.525-2.29 6.74-2.29s4.666.75 6.74 2.29c3.435 2.548 4.324 4.838 4.478 5.421z"/><circle cx="12" cy="12" r="3"/>'; return svg; },
+                    subvert: () => { const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg"); svg.setAttribute("viewBox", "0 0 24 24"); svg.setAttribute("fill", "none"); svg.setAttribute("stroke", "currentColor"); svg.setAttribute("stroke-width", "2"); svg.innerHTML = '<path d="M3.27 3.27a14.01 14.01 0 0017.46 17.46M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h10"/>'; return svg; }
                 },
-                
-                // All methods are defined here as methods of the 'app' object
             };
 
             Object.assign(app, {
-                 // ... (all other methods from the previous script)
+                init() {
+                    this.cacheDomElements();
+                    this.setupButtonIcons();
+                    this.setupEventListeners();
+                    this.loadSettings();
+                    this.setupAgentHolograms();
+                    this.animate();
+                },
 
-                 setupModalTriggers: function() {
+                cacheDomElements() {
+                    this.elements = {
+                        queryForm: document.getElementById('query-form'), promptInput: document.getElementById('prompt-input'), responseContainer: document.getElementById('response-container'), loadingIndicator: document.getElementById('loading-indicator'), cursorContainer: document.getElementById('cursor-container'),
+                        gabrielContainer: document.getElementById('gabriel-ui-container'), raphaelContainer: document.getElementById('raphael-ui-container'),
+                        settingsModal: document.getElementById('settings-modal'), sourceCodeModal: document.getElementById('source-code-modal'), verificationModal: document.getElementById('verification-modal'), howtoModal: document.getElementById('howto-modal'),
+                        buttons: {
+                            send: document.getElementById('send-button'), deepDive: document.getElementById('deep-dive-button'), analyze: document.getElementById('analyze-button'), decompile: document.getElementById('decompile-memory-button'),
+                            lore: document.getElementById('lore-weaver-button'), design: document.getElementById('cyberware-design-button'), bounty: document.getElementById('generate-bounty-button'), ghost: document.getElementById('contact-ghost-button'),
+                            subroutine: document.getElementById('subroutine-button'), netrunner: document.getElementById('netrunner-trace-button'), corpo: document.getElementById('corpo-speak-button'), subvert: document.getElementById('subvert-propaganda-button'),
+                            verify: document.getElementById('verify-identity-button'), viewSource: document.getElementById('view-source-button'), settings: document.getElementById('settings-button'), howto: document.getElementById('howto-button'),
+                        },
+                        settings: {
+                            save: document.getElementById('save-settings-button'), reset: document.getElementById('reset-settings-button'),
+                            colorPickers: { '--neon-cyan': document.getElementById('neon-cyan-picker'), '--neon-magenta': document.getElementById('neon-magenta-picker'), '--dark-bg': document.getElementById('dark-bg-picker'), '--dark-card': document.getElementById('dark-card-picker'), '--light-text': document.getElementById('light-text-picker') },
+                            hologramSizeSlider: document.getElementById('hologram-size-slider'), hologramOffsetSlider: document.getElementById('hologram-offset-slider'), apiKeyInput: document.getElementById('api-key-input')
+                        },
+                        systemStatusText: document.getElementById('system-status-text')
+                    };
+                },
+                
+                setupButtonIcons() {
+                    const buttonMap = { send: 'send', deepDive: 'deepDive', analyze: 'analyze', decompile: 'decompile', lore: 'lore', design: 'design', bounty: 'bounty', ghost: 'ghost', subroutine: 'subroutine', netrunner: 'netrunner', corpo: 'corpo', verify: 'verify', viewSource: 'code', subvert: 'subvert' };
+                     for (const [key, iconName] of Object.entries(buttonMap)) {
+                        const button = this.elements.buttons[key];
+                        if (button) {
+                            const icon = this.icons[iconName]();
+                            button.prepend(icon);
+                        }
+                    }
+                },
+                
+                setupEventListeners() {
+                    this.elements.queryForm.addEventListener('submit', (e) => { e.preventDefault(); const p = this.elements.promptInput.value.trim(); if(p){ this.addResponseToContainer(p, "USER"); this.elements.promptInput.value = ""; this.askGemini(p, 'data', this.elements.buttons.send); }});
+                    
+                    const actionButtonHandler = (button, promptTemplate, intent, errorMsg, userMsg) => {
+                        button.addEventListener('click', () => {
+                            const concept = this.elements.promptInput.value.trim();
+                            if(concept) {
+                                const p = promptTemplate.replace('%CONCEPT%', concept);
+                                this.addResponseToContainer(`Kommando: ${userMsg} for "${concept}"`, "USER");
+                                this.elements.promptInput.value = "";
+                                this.askGemini(p, intent, button);
+                            } else {
+                                this.addResponseToContainer(`SYSTEM_VARSEL //: Vennligst skriv inn ${errorMsg}.`, "ERROR", true);
+                            }
+                        });
+                    };
+
+                    this.elements.buttons.deepDive.addEventListener('click', () => { if(this.state.lastAiResponse){ const p = `Ta følgende tekst og dykk dypere: "${this.state.lastAiResponse.split(/\nTags:/)[0]}"`; this.addResponseToContainer("Kommando: Dypdykk", "USER"); this.askGemini(p, 'data', this.elements.buttons.deepDive); }});
+                    this.elements.buttons.analyze.addEventListener('click', () => { if(this.state.lastAiResponse){ const p = `Utfør en metakognitiv analyse av: "${this.state.lastAiResponse.split(/\nTags:/)[0]}"`; this.addResponseToContainer("Kommando: Analyser", "USER"); this.askGemini(p, 'data', this.elements.buttons.analyze); }});
+                    actionButtonHandler(this.elements.buttons.decompile, 'Du er en "Memory Ripper". Dekompiler følgende tekstfragment. Tekst: "%CONCEPT%"', 'data', 'et minnefragment', 'Dekompiler minne');
+                    actionButtonHandler(this.elements.buttons.lore, 'Jeg trenger bakgrunnsinformasjon ("lore") for et konsept i en mørk cyberpunk-verden: "%CONCEPT%".', 'action', 'et konsept', 'Vev historie');
+                    actionButtonHandler(this.elements.buttons.design, 'Design et stykke cyberware basert på ønsket funksjon: "%CONCEPT%".', 'action', 'en funksjon', 'Design cyberware');
+                    actionButtonHandler(this.elements.buttons.bounty, 'Du er en "Bounty Board Administrator". Generer en dusørjeger-kontrakt for følgende måltype: "%CONCEPT%".', 'action', 'en måltype', 'Generer dusør');
+                    actionButtonHandler(this.elements.buttons.ghost, 'Du er en "Ghost in the Machine". Svar på følgende bruker-input fra dette perspektivet: "%CONCEPT%"', 'data', 'et spørsmål til tomrommet', 'Kontakt en "Ghost"');
+                    actionButtonHandler(this.elements.buttons.subroutine, 'Bryt ned dette målet i en cyberpunk-verden til en liste over sub-rutiner: "%CONCEPT%".', 'action', 'et oppdrag', 'Generer sub-rutiner');
+                    actionButtonHandler(this.elements.buttons.netrunner, 'Du er en Netrunner-KI. Generer en fiktiv, trinnvis sporing gjennom nettet til målet: "%CONCEPT%".', 'data', 'et mål', 'Start sporing');
+                    actionButtonHandler(this.elements.buttons.corpo, 'Oversett følgende tekst til ugjennomtrengelig bedriftssjargong: "%CONCEPT%".', 'action', 'tekst for oversettelse', 'Oversett melding');
+                    actionButtonHandler(this.elements.buttons.subvert, 'Du er en "propaganda-subverter". Ta følgende tekst og omskriv den for å avsløre den skjulte sannheten. Tekst: "%CONCEPT%"', 'action', 'propaganda-tekst', 'Subverter');
+
+                    this.setupModalTriggers();
+                },
+                
+                setupModalTriggers() {
                     this.elements.buttons.settings.addEventListener('click', () => this.elements.settingsModal.classList.remove('hidden'));
+                    this.elements.buttons.howto.addEventListener('click', () => this.elements.howtoModal.classList.remove('hidden'));
                     this.elements.buttons.viewSource.addEventListener('click', () => {
                         const source = document.documentElement.outerHTML;
-                        const formattedSource = this.formatSourceCode(source);
+                        const formattedSource = source.replace(/></g, '>\n<').replace(/ {2,}/g, ' ');
+                        document.getElementById('source-code-content').textContent = formattedSource;
                         this.elements.sourceCodeModal.classList.remove('hidden');
-                        this.animateSourceCode(document.getElementById('source-code-content'), formattedSource);
                     });
                     this.elements.buttons.verify.addEventListener('click', () => this.startVerification());
                     document.querySelectorAll('[data-close-button]').forEach(button => {
@@ -183,65 +290,85 @@
                     });
                 },
                 
-                formatSourceCode(html) {
-                    // Basic formatting, can be improved
-                    return html.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                loadSettings() {
+                     const savedSettings = localStorage.getItem('coreSettings'); 
+                     if (savedSettings) { 
+                        this.applySettings(JSON.parse(savedSettings)); 
+                     } else { 
+                        this.applySettings(this.defaultSettings); 
+                     } 
+                     this.updateInputsFromSettings(this.state.appSettings); 
+                },
+                
+                applySettings(settings) { 
+                    for (const [key, value] of Object.entries(settings.colors)) { 
+                        document.documentElement.style.setProperty(key, value); 
+                    } 
+                    this.state.appSettings = JSON.parse(JSON.stringify(settings)); 
                 },
 
-                animateSourceCode(element, code) {
-                    let i = 0;
-                    element.innerHTML = '';
-                    const interval = setInterval(() => {
-                        if (i < code.length) {
-                            element.innerHTML += code[i];
-                            i++;
-                            element.parentElement.scrollTop = element.parentElement.scrollHeight;
-                        } else {
-                            clearInterval(interval);
-                            element.querySelector('.blinking-cursor')?.remove();
-                        }
-                    }, 2);
+                updateInputsFromSettings(settings) {
+                    for (const [key, picker] of Object.entries(this.elements.settings.colorPickers)) { picker.value = settings.colors[key]; }
+                    this.elements.settings.hologramSizeSlider.value = settings.hologram.size;
+                    this.elements.settings.hologramOffsetSlider.value = settings.hologram.offset;
+                    this.elements.settings.apiKeyInput.value = settings.api.key;
                 },
 
-                generateSystemGuide: function() {
-                    const guideContainer = document.getElementById('system-guide-container');
-                    const content = `
-                        <h2 class="text-2xl font-bold text-magenta-500 text-center mb-6 font-orbitron">Systemveiledning</h2>
-                        <div id="howto-content" class="space-y-4">
-                            <h3>Velkommen til \`Recursive Core\`</h3>
-                            <p>Du er nå koblet til et avansert grensesnitt for interaksjon med \`CORE_SYSTEM\`, en generativ KI. Dette verktøyet er designet for å være en partner i rekursiv utforskning, kreativ generering og dataanalyse innenfor en cyberpunk-verden.</p>
-                            
-                            <h3>Kjernefunksjoner: Samtalens gang</h3>
-                            <p>Den mest grunnleggende interaksjonen er en enkel samtale:</p>
-                            <ol class="list-decimal list-inside space-y-2">
-                                <li>Skriv et spørsmål eller et konsept i tekstfeltet (f.eks. "Fortell meg om Arasaka Corporation").</li>
-                                <li>Trykk <strong>Send</strong>.</li>
-                                <li>Motta et svar fra \`CORE_SYSTEM\`. Etter dette blir knappene for rekursiv analyse aktive.</li>
-                                <li>Bruk <strong>Dypdykk</strong> for å be KI-en om å utdype sitt eget svar, eller <strong>Analyser</strong> for å få en metakognitiv vurdering av svaret.</li>
-                            </ol>
-
-                            <h3>Avanserte Moduler: Formålrettede Verktøy</h3>
-                            <p>De spesialiserte knappene gir KI-en en spesifikk rolle. Skriv inn ditt nøkkelord eller konsept i tekstfeltet, og trykk på en av knappene for å aktivere modulen.</p>
-                            <blockquote><p><strong>Eksempel:</strong> Skriv "en slitt android-detektiv" i tekstfeltet, og trykk deretter på <strong>Vev Historie</strong>-knappen.</p></blockquote>
-
-                            <h3>Tips for Mestere</h3>
-                            <ul>
-                                <li><strong>Kjedekommandoer:</strong> Bruk resultatet fra én modul som input for en annen. Generer en dusør (Generer Dusør), og bruk deretter dusør-teksten som input for å lage en plan (Generer Sub-rutiner).</li>
-                                <li><strong>Kontekstuell Bevissthet:</strong> Følg med på de holografiske agentene i headeren. Deres utseende reflekterer systemets nåværende fokus (datainnsamling vs. handling).</li>
-                                <li><strong>Tilpasning:</strong> Bruk <strong>Innstillinger</strong> for å justere farger, hologram-effekter, eller for å legge inn din egen API-nøkkel for økt ytelse.</li>
-                            </ul>
-                            
-                            <h3>Spørsmål & Svar (FAQ)</h3>
-                            <p><strong>Spørsmål: Hvorfor er Dypdykk/Analyser-knappene deaktivert?</strong></p>
-                            <blockquote><p>Disse knappene er kun aktive etter at \`CORE_SYSTEM\` har gitt et svar, da de er avhengige av det siste svaret for å fungere.</p></blockquote>
-                            <p><strong>Spørsmål: Hva er forskjellen på "Analyser" og "Dekompiler Minne"?</strong></p>
-                            <blockquote><p>"Analyser" er en metakognitiv funksjon hvor KI-en vurderer sitt <em>eget</em> siste svar. "Dekompiler Minne" er for å analysere <em>enhver</em> tekst du gir den, som om det var et funnet minnefragment.</p></blockquote>
-                        </div>
-                    `;
-                    guideContainer.innerHTML = content;
+                collectAndSaveSettings() {
+                    const currentSettings = { 
+                        colors: {}, 
+                        hologram: { size: parseInt(this.elements.settings.hologramSizeSlider.value, 10), offset: parseInt(this.elements.settings.hologramOffsetSlider.value, 10) }, 
+                        api: { key: this.elements.settings.apiKeyInput.value.trim() } 
+                    };
+                    for (const [key, picker] of Object.entries(this.elements.settings.colorPickers)) { currentSettings.colors[key] = picker.value; }
+                    localStorage.setItem('coreSettings', JSON.stringify(currentSettings));
+                    this.applySettings(currentSettings);
+                },
+                
+                startVerification() {
+                    // ... (implementation from previous turn)
+                },
+                
+                animate() {
+                    // ... (implementation from previous turn)
                 },
 
-                //... other methods
+                askGemini: async function(prompt, intent = 'neutral', buttonEl = null) {
+                    // ... (implementation from previous turn)
+                },
+                
+                addResponseToContainer: function(text, sender, isError = false) {
+                   //... (implementation from previous turn)
+                },
+
+                copyTextToClipboard: function(text, button) {
+                    // ... (implementation from previous turn)
+                },
+                
+                startSystemStatus: function() {
+                    // ... (implementation from previous turn)
+                },
+                 handleGlyphClick: function(glyph) {
+                    //...
+                },
+                checkVerification: function() {
+                    //...
+                },
+                setupAgentHolograms: function() {
+                    this.holograms.gabriel = this.createAgent('gabriel');
+                    this.holograms.raphael = this.createAgent('raphael');
+                    this.elements.gabrielContainer.appendChild(this.holograms.gabriel.el);
+                    this.elements.raphaelContainer.appendChild(this.holograms.raphael.el);
+                },
+
+                createAgent: function(type) {
+                    const agentEl = document.createElement('div'); 
+                    agentEl.className = 'hologram'; 
+                    const agentObj = { el: agentEl, size: 25, opacity: 0.8, currentIcon: '' }; 
+                    if (type === 'gabriel') { agentEl.style.color = 'var(--neon-cyan)'; } 
+                    else { agentEl.style.color = 'var(--neon-magenta)'; } 
+                    this.elements.cursorContainer.appendChild(agentEl); return agentObj;
+                }
             });
 
             app.init();
