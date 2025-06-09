@@ -2,27 +2,27 @@
 
 ## Et interaktivt web-grensesnitt for avanserte, rekursive interaksjoner med en KI, pakket inn i en mørk og mystisk cyberpunk-estetikk.
 
-# Innholdsfortegnelse
-## Om Prosjektet
+## Innholdsfortegnelse
+ Om Prosjektet
 
-## Funksjoner
+ Funksjoner
 
-## Teknologi-stack
+ Teknologi-stack
 
-## Kom i gang
+ Kom i gang
 
-## Forutsetninger
+ Forutsetninger
 
-## Installasjon
+ Installasjon
 
-## Bruk
+Bruk
 
-## Bidra
+ Bidra
 
-## Lisens
+ Lisens
 
 # Om Prosjektet
-Project: Recursive Core er en webapplikasjon designet for å demonstrere avanserte interaksjoner med en generativ KI som Google Gemini. I stedet for enkle spørsmål og svar, oppfordrer grensesnittet til rekursive operasjoner hvor brukeren kan be KI-en om å utdype, analysere, eller transformere sine egne svar.
+## Project: Recursive Core er en webapplikasjon designet for å demonstrere avanserte interaksjoner med en generativ KI som Google Gemini. I stedet for enkle spørsmål og svar, oppfordrer grensesnittet til rekursive operasjoner hvor brukeren kan be KI-en om å utdype, analysere, eller transformere sine egne svar.
 
 ### Prosjektet er pakket inn i en cyberpunk-estetikk for å skape en immersiv og tematisk opplevelse.
 
