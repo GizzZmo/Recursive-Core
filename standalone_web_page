@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project: Recursive Core - Interaktiv Cyberpunk KI</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Utforsk en mørk cyberpunk-verden med Project: Recursive Core, en interaktiv nettside drevet av Google Gemini. Still spørsmål, generer historier, design cyberware og se KI-en analysere seg selv.">
+    <meta name="keywords" content="KI, AI, Gemini, Google, cyberpunk, interaktiv, rekursiv, generativ KI, chatbot, Norsk KI">
+    <link rel="canonical" href="https://example.com/recursive-core"> <!-- Endre til faktisk domene -->
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://example.com/recursive-core">
+    <meta property="og:title" content="Project: Recursive Core - Interaktiv Cyberpunk KI">
+    <meta property="og:description" content="En interaktiv nettside drevet av Google Gemini for å utforske en mørk cyberpunk-verden.">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://example.com/recursive-core">
+    <meta property="twitter:title" content="Project: Recursive Core - Interaktiv Cyberpunk KI">
+    <meta property="twitter:description" content="En interaktiv nettside drevet av Google Gemini for å utforske en mørk cyberpunk-verden.">
+
+
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts for Cyberpunk aesthetic -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+    <!-- Marked.js to render Markdown responses from API -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <style>
+        /* Custom styles for the cyberpunk theme */
+        :root {
+            --neon-cyan: #00ffff;
+            --neon-magenta: #ff00ff;
+            --dark-bg: #0b0c10;
+            --dark-card: #1f2833;
+            --light-text: #c5c6c7;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--light-text);
+            font-family: 'Share Tech Mono', monospace;
+            background-image:
+                linear-gradient(rgba(11, 12, 16, 0.95), rgba(11, 12, 16, 0.95)),
+                url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+            cursor: none; /* Hide default cursor */
+            overflow: hidden; /* Prevent scrollbars from the effect */
+        }
+
+        /* Dynamic styles will be applied via JS */
+        h1, h2, .font-orbitron {
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 0 0 5px var(--neon-cyan), 0 0 10px var(--neon-cyan), 0 0 15px var(--neon-cyan);
+        }
+        
+        .neon-border {
+            border: 1px solid var(--neon-cyan);
+            box-shadow: 0 0 5px var(--neon-cyan), 0 0 10px var(--neon-cyan), 0 0 15px var(--neon-cyan);
+        }
+
+        .neon-border-magenta {
+            border: 1px solid var(--neon-magenta);
+            box-shadow: 0 0 5px var(--neon-magenta), 0 0 10px var(--neon-magenta), 0 0 15px var(--neon-magenta);
+        }
+        
+        .cyber-button {
+            background-color: transparent;
+            border: 1px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            padding: 10px 20px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+
+        .cyber-button:hover:not(:disabled) {
+            background-color: var(--neon-cyan);
+            color: var(--dark-bg);
+            box-shadow: 0 0 5px var(--neon-cyan), 0 0 10px var(--neon-cyan), 0 0 15px var(--neon-cyan);
+        }
+        
+        .cyber-button.magenta {
+            border-color: var(--neon-magenta);
+            color: var(--neon-magenta);
+        }
+
+        .cyber-button.magenta:hover:not(:disabled) {
+            background-color: var(--neon-magenta);
+            color: var(--dark-bg);
+            box-shadow: 0 0 5px var(--neon-magenta), 0 0 10px var(--neon-magenta), 0 0 15px var(--neon-magenta);
+        }
+
+        /* Settings Modal */
+        #settings-modal {
+            background-color: rgba(11, 12, 16, 0.8);
+            backdrop-filter: blur(5px);
+        }
+        #settings-panel {
+            background-color: var(--dark-card);
+            border: 1px solid var(--neon-cyan);
+            box-shadow: 0 0 15px var(--neon-cyan);
+        }
+        .settings-input {
+            background-color: #0b0c10;
+            border: 1px solid #4a5568;
+            color: var(--light-text);
+        }
+        input[type="color"] {
+            -webkit-appearance: none;
+            border: none;
+            width: 48px;
+            height: 24px;
+            cursor: pointer;
+        }
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+        input[type="color"]::-webkit-color-swatch {
+            border: 1px solid #4a5568;
+            border-radius: 4px;
+        }
+
+        /* Cyberpunk Cursor Styles */
+        #cursor-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+        .hologram {
+            position: absolute; pointer-events: none; will-change: transform, opacity; mix-blend-mode: screen; transition: transform 0.2s ease-out, opacity 0.3s ease-out, width 0.3s ease-out, height 0.3s ease-out;
+        }
+        .hologram svg {
+            width: 100%; height: 100%; overflow: visible;
+        }
+        .cursor-main {
+             position: absolute; width: 8px; height: 8px; background: var(--neon-magenta); border: 1px solid var(--neon-magenta); box-shadow: 0 0 5px var(--neon-magenta), 0 0 10px var(--neon-magenta); mix-blend-mode: lighten; transform: translate(-50%, -50%); border-radius: 50%;
+        }
+
+        main {
+             height: 100vh;
+             overflow-y: auto;
+        }
+        .response-content h1, .response-content h2, .response-content h3 {
+            font-family: 'Orbitron', sans-serif; color: var(--neon-cyan); text-shadow: 0 0 5px var(--neon-cyan); margin-top: 1rem; margin-bottom: 0.5rem;
+        }
+        .response-content a {
+            color: var(--neon-magenta); text-decoration: underline; transition: color 0.3s;
+        }
+
+        .tag-container {
+            border-top-color: var(--dark-card);
+        }
+
+        .ai-tag {
+            background-color: var(--dark-card); color: var(--neon-cyan);
+        }
+        .ai-tag:hover {
+            background-color: var(--neon-magenta); color: var(--dark-bg); text-shadow: 0 0 5px var(--neon-magenta);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- This container will hold the cursor effects -->
+    <div id="cursor-container"></div>
+
+    <main class="max-w-5xl mx-auto grid gap-8 relative z-10 p-4">
+        <!-- Header Section -->
+        <header class="text-center p-4 neon-border rounded-lg flex justify-between items-center">
+             <div class="w-8"></div> <!-- Spacer -->
+            <div class="flex-grow">
+                <h1 class="text-3xl md:text-5xl font-bold text-cyan-400 font-orbitron">
+                    Project: Recursive Core
+                </h1>
+                <p class="text-lg text-gray-400 mt-2">Et interaktivt grensesnitt for avansert KI-interaksjon</p>
+            </div>
+            <button id="settings-button" class="text-cyan-400 hover:text-magenta-500 transition-colors" title="Innstillinger">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+            </button>
+        </header>
+
+        <!-- AI Interaction Section -->
+        <section id="ai-interaction" class="p-6 bg-gray-900/50 backdrop-blur-sm rounded-lg border border-gray-700">
+            <!-- Response Display -->
+            <div id="response-container" class="h-96 overflow-y-auto pr-4 mb-4 space-y-4">
+                <div class="p-4 rounded-lg bg-gray-800/70 border border-gray-600">
+                    <p class="font-bold text-cyan-400">CORE_SYSTEM //:</p>
+                    <p>Systemet er online. ✨**Instillinger-meny** er installert. Tilpass grensesnittet via tannhjul-ikonet øverst til høyre. System-dokumentasjon er oppdatert.</p>
+                </div>
+            </div>
+            <!-- Loading and Input Form here -->
+             <div id="loading-indicator" class="hidden flex items-center justify-center my-2"> <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-400"></div> <p class="ml-3 text-cyan-400">Behandler forespørsel...</p> </div>
+             <form id="query-form" class="grid gap-4"> <textarea id="prompt-input" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-cyan-400 transition-all" rows="3" placeholder="Skriv inn din kommando... //"></textarea> <div class="grid grid-cols-2 md:grid-cols-3 gap-4"> <button type="submit" id="send-button" class="cyber-button">Send</button> <button type="button" id="deep-dive-button" class="cyber-button" disabled>Dypdykk</button> <button type="button" id="analyze-button" class="cyber-button" disabled>Analyser</button> <button type="button" id="lore-weaver-button" class="cyber-button">✨ Vev Historie</button> <button type="button" id="cyberware-design-button" class="cyber-button">✨ Design Cyberware</button> <button type="button" id="corpo-speak-button" class="cyber-button">✨ Oversett til Corpo</button> <button type="button" id="subroutine-button" class="cyber-button col-span-full">✨ Generer Sub-rutiner</button> </div> </form>
+        </section>
+
+        <!-- Documentation Section -->
+        <section id="documentation">
+            <h2 class="text-2xl font-bold text-magenta-500 text-center mb-6 font-orbitron">SYSTEMDOKUMENTASJON</h2>
+            <div class="space-y-4">
+                <details open>
+                    <summary>Kjernefunksjoner & Nye Moduler</summary>
+                    <div class="details-content response-content">
+                        <hr class="border-cyan-400 my-4">
+                        <h3 class="text-xl text-cyan-400">NY MODUL: ✨ Instillinger-meny</h3>
+                        <p>En ny instillinger-meny er tilgjengelig via tannhjul-ikonet. Denne menyen gir deg kontroll over flere av grensesnittets variabler i sanntid. Alle endringer lagres lokalt i din nettleser.</p>
+                        <ul>
+                          <li><strong>Temafarger:</strong> Juster de primære fargene i brukergrensesnittet.</li>
+                          <li><strong>Hologram-effekt:</strong> Kontroller størrelsen og avstanden til musepeker-agentene.</li>
+                          <li><strong>API:</strong> Mulighet for å legge inn din egen Gemini API-nøkkel.</li>
+                        </ul>
+                         <h3 class="text-xl text-cyan-400 mt-4">ANDRE MODULER</h3>
+                         <p>Alle tidligere moduler, inkludert <strong>Kontekstuell Agent-Matrise</strong> og <strong>Corpo-Speak Translatør</strong>, er operative.</p>
+                    </div>
+                </details>
+            </div>
+        </section>
+        
+        <footer class="text-center text-gray-600 text-xs py-4">
+            <p>//: END_OF_TRANSMISSION ://</p>
+            <p>Recursive Core v2.4 - UI variable control integrated.</p>
+        </footer>
+    </main>
+    
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div id="settings-panel" class="w-full max-w-lg rounded-lg p-6 space-y-6">
+            <div class="flex justify-between items-center">
+                <h2 class="text-2xl font-orbitron text-cyan-400">Instillinger</h2>
+                <button id="close-settings-button" class="text-gray-400 hover:text-white">&times;</button>
+            </div>
+
+            <!-- Theme Settings -->
+            <div class="space-y-4">
+                <h3 class="font-bold text-magenta-500 border-b border-magenta-500/50 pb-1">Temafarger</h3>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 items-center">
+                    <label for="neon-cyan-picker">Neon Cyan</label><input type="color" id="neon-cyan-picker" class="settings-input">
+                    <label for="neon-magenta-picker">Neon Magenta</label><input type="color" id="neon-magenta-picker" class="settings-input">
+                    <label for="dark-bg-picker">Mørk Bakgrunn</label><input type="color" id="dark-bg-picker" class="settings-input">
+                    <label for="dark-card-picker">Kort Bakgrunn</label><input type="color" id="dark-card-picker" class="settings-input">
+                    <label for="light-text-picker">Tekstfarge</label><input type="color" id="light-text-picker" class="settings-input">
+                </div>
+            </div>
+
+            <!-- Hologram Settings -->
+            <div class="space-y-4">
+                <h3 class="font-bold text-magenta-500 border-b border-magenta-500/50 pb-1">Hologram-effekt</h3>
+                <div class="space-y-2">
+                    <label for="hologram-size-slider">Størrelse</label>
+                    <input type="range" id="hologram-size-slider" min="10" max="50" class="w-full">
+                </div>
+                <div class="space-y-2">
+                    <label for="hologram-offset-slider">Avstand</label>
+                    <input type="range" id="hologram-offset-slider" min="15" max="80" class="w-full">
+                </div>
+            </div>
+            
+             <!-- API Key Settings -->
+            <div class="space-y-4">
+                <h3 class="font-bold text-magenta-500 border-b border-magenta-500/50 pb-1">API</h3>
+                <div class="space-y-2">
+                    <label for="api-key-input">Gemini API Nøkkel (valgfri)</label>
+                    <input type="password" id="api-key-input" class="w-full p-2 settings-input rounded" placeholder="Lim inn din API-nøkkel her">
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-4">
+                 <button id="reset-settings-button" class="cyber-button magenta">Tilbakestill</button>
+                 <button id="save-settings-button" class="cyber-button">Lagre & Lukk</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- GLOBAL SETTINGS ---
+            let appSettings = {};
+            const defaultSettings = {
+                colors: { '--neon-cyan': '#00ffff', '--neon-magenta': '#ff00ff', '--dark-bg': '#0b0c10', '--dark-card': '#1f2833', '--light-text': '#c5c6c7' },
+                hologram: { size: 25, offset: 30 },
+                api: { key: '' }
+            };
+
+            // --- HOLOGRAPHIC AGENT CURSOR SCRIPT ---
+            const cursorContainer = document.getElementById('cursor-container');
+            const SVG_NS = "http://www.w3.org/2000/svg";
+            let realMouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+            let smoothedMouse = { ...realMouse };
+            const primaryCursor = document.createElement('div');
+            primaryCursor.className = 'cursor-main';
+            cursorContainer.appendChild(primaryCursor);
+            let currentIntent = 'neutral';
+            function createGabrielSVG() { const svg = document.createElementNS(SVG_NS, "svg"); svg.setAttribute("viewBox", "0 0 24 24"); svg.setAttribute("fill", "none"); svg.setAttribute("stroke", "currentColor"); svg.setAttribute("stroke-width", "1.5"); const path = document.createElementNS(SVG_NS, "path"); path.setAttribute("d", "M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2zM9 7h6M9 11h6M9 15h4"); svg.appendChild(path); return svg; }
+            function createRaphaelSVG() { const svg = document.createElementNS(SVG_NS, "svg"); svg.setAttribute("viewBox", "0 0 24 24"); svg.setAttribute("fill", "none"); svg.setAttribute("stroke", "currentColor"); svg.setAttribute("stroke-width", "1.5"); const path = document.createElementNS(SVG_NS, "path"); path.setAttribute("d", "M22 12c-3-2-6-3-9-3s-6 1-9 3c3 2 6 3 9 3s6-1 9-3zM3 12v0c0 2.5 4 4.5 9 4.5s9-2 9-4.5v0"); svg.appendChild(path); return svg; }
+            function createAgent(type) { const agentEl = document.createElement('div'); agentEl.className = 'hologram'; const agentObj = { el: agentEl, size: 25, opacity: 0.8 }; let svg; if (type === 'gabriel') { agentEl.style.color = 'var(--neon-cyan)'; svg = createGabrielSVG(); } else { agentEl.style.color = 'var(--neon-magenta)'; svg = createRaphaelSVG(); } agentEl.appendChild(svg); cursorContainer.appendChild(agentEl); return agentObj; }
+            const gabrielHologram = createAgent('gabriel');
+            const raphaelHologram = createAgent('raphael');
+            window.addEventListener('mousemove', (e) => { realMouse.x = e.clientX; realMouse.y = e.clientY; });
+            let lastMousePos = { ...realMouse };
+            function animate() {
+                const dx = realMouse.x - lastMousePos.x; const dy = realMouse.y - lastMousePos.y; lastMousePos = { ...realMouse }; const angle = Math.atan2(dy, dx) * (180 / Math.PI) + 90;
+                smoothedMouse.x += (realMouse.x - smoothedMouse.x) * 0.2; smoothedMouse.y += (realMouse.y - smoothedMouse.y) * 0.2;
+                primaryCursor.style.transform = `translate(${smoothedMouse.x}px, ${smoothedMouse.y}px)`;
+                
+                // Use settings for hologram size
+                let baseSize = appSettings.hologram?.size || defaultSettings.hologram.size;
+                if(currentIntent === 'data') {
+                    gabrielHologram.size += (baseSize * 1.4 - gabrielHologram.size) * 0.1; gabrielHologram.opacity += (1 - gabrielHologram.opacity) * 0.1;
+                    raphaelHologram.size += (baseSize * 0.6 - raphaelHologram.size) * 0.1; raphaelHologram.opacity += (0.3 - raphaelHologram.opacity) * 0.1;
+                } else if (currentIntent === 'action') {
+                    gabrielHologram.size += (baseSize * 0.6 - gabrielHologram.size) * 0.1; gabrielHologram.opacity += (0.3 - gabrielHologram.opacity) * 0.1;
+                    raphaelHologram.size += (baseSize * 1.4 - raphaelHologram.size) * 0.1; raphaelHologram.opacity += (1 - raphaelHologram.opacity) * 0.1;
+                } else {
+                    gabrielHologram.size += (baseSize - gabrielHologram.size) * 0.1; gabrielHologram.opacity += (0.8 - gabrielHologram.opacity) * 0.1;
+                    raphaelHologram.size += (baseSize - raphaelHologram.size) * 0.1; raphaelHologram.opacity += (0.8 - raphaelHologram.opacity) * 0.1;
+                }
+                gabrielHologram.el.style.width = `${gabrielHologram.size}px`; gabrielHologram.el.style.height = `${gabrielHologram.size}px`; raphaelHologram.el.style.width = `${raphaelHologram.size}px`; raphaelHologram.el.style.height = `${raphaelHologram.size}px`;
+                
+                // Use settings for offset
+                const offset = appSettings.hologram?.offset || defaultSettings.hologram.offset;
+                const gabrielX = smoothedMouse.x - offset; const gabrielY = smoothedMouse.y - offset; const raphaelX = smoothedMouse.x + offset; const raphaelY = smoothedMouse.y + offset;
+                gabrielHologram.el.style.transform = `translate(${gabrielX - gabrielHologram.size/2}px, ${gabrielY - gabrielHologram.size/2}px) rotate(${angle}deg)`;
+                raphaelHologram.el.style.transform = `translate(${raphaelX - raphaelHologram.size/2}px, ${raphaelY - raphaelHologram.size/2}px) rotate(${angle}deg)`;
+                gabrielHologram.el.style.opacity = gabrielHologram.opacity; raphaelHologram.el.style.opacity = raphaelHologram.opacity;
+                requestAnimationFrame(animate);
+            }
+            animate();
+
+            // --- SETTINGS LOGIC ---
+            const settingsModal = document.getElementById('settings-modal');
+            const settingsButton = document.getElementById('settings-button');
+            const closeSettingsButton = document.getElementById('close-settings-button');
+            const saveSettingsButton = document.getElementById('save-settings-button');
+            const resetSettingsButton = document.getElementById('reset-settings-button');
+            // Input elements
+            const colorPickers = {
+                '--neon-cyan': document.getElementById('neon-cyan-picker'), '--neon-magenta': document.getElementById('neon-magenta-picker'),
+                '--dark-bg': document.getElementById('dark-bg-picker'), '--dark-card': document.getElementById('dark-card-picker'), '--light-text': document.getElementById('light-text-picker')
+            };
+            const hologramSizeSlider = document.getElementById('hologram-size-slider');
+            const hologramOffsetSlider = document.getElementById('hologram-offset-slider');
+            const apiKeyInput = document.getElementById('api-key-input');
+
+            function applySettings(settings) {
+                // Apply colors
+                for (const [key, value] of Object.entries(settings.colors)) {
+                    document.documentElement.style.setProperty(key, value);
+                }
+                // Hologram settings are read directly in the animate loop
+                appSettings = JSON.parse(JSON.stringify(settings)); // Deep copy
+            }
+
+            function updateInputsFromSettings(settings) {
+                for (const [key, picker] of Object.entries(colorPickers)) {
+                    picker.value = settings.colors[key];
+                }
+                hologramSizeSlider.value = settings.hologram.size;
+                hologramOffsetSlider.value = settings.hologram.offset;
+                apiKeyInput.value = settings.api.key;
+            }
+
+            function loadSettings() {
+                const savedSettings = localStorage.getItem('coreSettings');
+                if (savedSettings) {
+                    applySettings(JSON.parse(savedSettings));
+                } else {
+                    applySettings(defaultSettings);
+                }
+                updateInputsFromSettings(appSettings);
+            }
+            
+            function collectAndSaveSettings() {
+                const currentSettings = {
+                    colors: {},
+                    hologram: {
+                        size: parseInt(hologramSizeSlider.value, 10),
+                        offset: parseInt(hologramOffsetSlider.value, 10)
+                    },
+                    api: { key: apiKeyInput.value.trim() }
+                };
+                for (const [key, picker] of Object.entries(colorPickers)) {
+                    currentSettings.colors[key] = picker.value;
+                }
+                localStorage.setItem('coreSettings', JSON.stringify(currentSettings));
+                applySettings(currentSettings);
+                return currentSettings;
+            }
+
+            settingsButton.addEventListener('click', () => settingsModal.classList.remove('hidden'));
+            closeSettingsButton.addEventListener('click', () => {
+                loadSettings(); // Revert any unsaved changes
+                settingsModal.classList.add('hidden');
+            });
+            saveSettingsButton.addEventListener('click', () => {
+                collectAndSaveSettings();
+                settingsModal.classList.add('hidden');
+            });
+            resetSettingsButton.addEventListener('click', () => {
+                localStorage.removeItem('coreSettings');
+                applySettings(defaultSettings);
+                updateInputsFromSettings(defaultSettings);
+            });
+
+            // Live preview for colors
+            Object.values(colorPickers).forEach(picker => {
+                picker.addEventListener('input', () => {
+                    document.documentElement.style.setProperty(picker.id.replace('-picker',''), picker.value);
+                });
+            });
+
+
+            // --- CORE AI SCRIPT ---
+            const queryForm = document.getElementById('query-form');
+            const promptInput = document.getElementById('prompt-input');
+            const responseContainer = document.getElementById('response-container');
+            const loadingIndicator = document.getElementById('loading-indicator');
+            let lastAiResponse = "";
+
+            async function askGemini(prompt, intent = 'neutral') {
+                currentIntent = intent;
+                loadingIndicator.classList.remove('hidden');
+                document.querySelectorAll('.cyber-button').forEach(b => b.disabled = true);
+                promptInput.disabled = true;
+
+                const userApiKey = appSettings.api?.key || '';
+                const apiKey = userApiKey; // Use user's key if available
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                const taggedPrompt = `${prompt}\n\nAvslutt svaret ditt med en linje som starter med "Tags:" etterfulgt av 3-4 relevante hashtags. Sørg for at taggen #core_system ALLTID er inkludert.`;
+                const payload = { contents: [{ role: "user", parts: [{ text: taggedPrompt }] }] };
+
+                try {
+                    const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                    if (!response.ok) { 
+                        const err = await response.json();
+                        throw new Error(err.error?.message || `API Error: ${response.status}`);
+                    }
+                    const result = await response.json();
+                    if (result.candidates && result.candidates[0]?.content?.parts?.[0]) {
+                        const aiText = result.candidates[0].content.parts[0].text;
+                        lastAiResponse = aiText;
+                        addResponseToContainer(aiText, "CORE_SYSTEM");
+                        document.getElementById('deep-dive-button').disabled = false;
+                        document.getElementById('analyze-button').disabled = false;
+                    } else { throw new Error("Mottok et uventet format fra KI-en."); }
+                } catch (error) {
+                    console.error("Feil under API-kall:", error);
+                    addResponseToContainer(`SYSTEM_ERROR //: ${error.message}.`, "ERROR", true);
+                } finally {
+                    loadingIndicator.classList.add('hidden');
+                    promptInput.disabled = false;
+                    document.querySelectorAll('.cyber-button').forEach(b => { if (b.id !== 'deep-dive-button' && b.id !== 'analyze-button') b.disabled = false; });
+                    if (!lastAiResponse) { document.getElementById('deep-dive-button').disabled = true; document.getElementById('analyze-button').disabled = true; }
+                    setTimeout(() => { currentIntent = 'neutral'; }, 2000);
+                }
+            }
+            
+            function addResponseToContainer(text, sender, isError = false) { /* ... no changes here ... */ const messageDiv = document.createElement('div'); messageDiv.className = 'p-4 rounded-lg bg-gray-800/70 border'; let mainText = text; let tagsText = ''; const tagRegex = /\nTags:(.*)$/im; const match = text.match(tagRegex); if (match && match[1]) { tagsText = match[1].trim(); mainText = text.replace(tagRegex, '').trim(); } const headerDiv = document.createElement('div'); headerDiv.className = 'flex justify-between items-center mb-2'; const senderP = document.createElement('p'); senderP.className = 'font-bold'; if (isError) { messageDiv.classList.add('neon-border-magenta'); senderP.classList.add('text-magenta-500'); } else { messageDiv.classList.add('border-gray-600'); senderP.classList.add('text-cyan-400'); } senderP.textContent = `${sender} //:`; headerDiv.appendChild(senderP); const contentDiv = document.createElement('div'); contentDiv.className = 'response-content'; if (sender === 'CORE_SYSTEM' && !isError) { const copyButton = document.createElement('button'); copyButton.textContent = 'Kopier'; copyButton.className = 'copy-button'; copyButton.onclick = () => copyTextToClipboard(text, copyButton); headerDiv.appendChild(copyButton); } contentDiv.innerHTML = marked.parse(mainText); messageDiv.appendChild(headerDiv); messageDiv.appendChild(contentDiv); if (tagsText && !isError) { const tagsContainer = document.createElement('div'); tagsContainer.className = 'mt-4 pt-3 border-t border-gray-700/50 flex flex-wrap gap-2 tag-container'; tagsText.split(/\s+/).filter(tag => tag.startsWith('#')).forEach(tag => { const tagElement = document.createElement('span'); tagElement.className = 'ai-tag inline-block text-xs font-semibold px-2.5 py-1 rounded-full'; tagElement.textContent = tag; tagElement.onclick = () => { addResponseToContainer(`Kommando: Utforsk tag '${tag}'`, "USER"); askGemini(`Fortell meg mer om konseptet bak taggen: ${tag}`, 'data'); }; tagsContainer.appendChild(tagElement); }); messageDiv.appendChild(tagsContainer); } responseContainer.appendChild(messageDiv); contentDiv.querySelectorAll('pre').forEach(preElement => { const codeText = preElement.querySelector('code')?.innerText; if (!codeText) return; const copyCodeButton = document.createElement('button'); copyCodeButton.textContent = 'Kopier kode'; copyCodeButton.className = 'copy-button absolute top-2 right-2'; copyCodeButton.onclick = () => copyTextToClipboard(codeText, copyCodeButton); preElement.appendChild(copyCodeButton); }); responseContainer.scrollTop = responseContainer.scrollHeight; }
+            function copyTextToClipboard(text, button) { const textArea = document.createElement("textarea"); textArea.value = text; textArea.style.position = "fixed"; document.body.appendChild(textArea); textArea.focus(); textArea.select(); try { if (document.execCommand('copy')) { const originalText = button.textContent; button.textContent = 'Kopiert!'; setTimeout(() => { button.textContent = originalText; button.blur(); }, 2000); } } catch (err) { console.error('Kunne ikke kopiere tekst: ', err); } document.body.removeChild(textArea); }
+
+            // --- EVENT LISTENERS (INTENT-AWARE) ---
+            function setupEventListeners() {
+                const buttons = {
+                    send: document.getElementById('send-button'),
+                    deepDive: document.getElementById('deep-dive-button'),
+                    analyze: document.getElementById('analyze-button'),
+                    lore: document.getElementById('lore-weaver-button'),
+                    design: document.getElementById('cyberware-design-button'),
+                    corpo: document.getElementById('corpo-speak-button'),
+                    subroutine: document.getElementById('subroutine-button')
+                };
+
+                queryForm.addEventListener('submit', (e) => { e.preventDefault(); const p = promptInput.value.trim(); if(p){ addResponseToContainer(p, "USER"); promptInput.value = ""; askGemini(p, 'data'); }});
+                buttons.deepDive.addEventListener('click', () => { if(lastAiResponse){ const p = `Ta følgende tekst og dykk dypere: "${lastAiResponse.split(/\nTags:/)[0]}"`; addResponseToContainer("Kommando: Dypdykk", "USER"); askGemini(p, 'data'); }});
+                buttons.analyze.addEventListener('click', () => { if(lastAiResponse){ const p = `Utfør en metakognitiv analyse av: "${lastAiResponse.split(/\nTags:/)[0]}"`; addResponseToContainer("Kommando: Analyser", "USER"); askGemini(p, 'data'); }});
+                
+                const actionButtonHandler = (promptTemplate, intent, errorMsg) => {
+                    const concept = promptInput.value.trim();
+                    if(concept) {
+                        const p = promptTemplate.replace('%CONCEPT%', concept);
+                        addResponseToContainer(`Kommando: ${errorMsg} for "${concept}"`, "USER");
+                        promptInput.value = ""; askGemini(p, intent);
+                    } else { addResponseToContainer(`SYSTEM_VARSEL //: Vennligst skriv inn ${errorMsg}.`, "ERROR", true); }
+                };
+
+                buttons.lore.addEventListener('click', () => actionButtonHandler('Jeg trenger bakgrunnsinformasjon ("lore") for et konsept i en mørk cyberpunk-verden: "%CONCEPT%".', 'action', 'et konsept'));
+                buttons.subroutine.addEventListener('click', () => actionButtonHandler('Bryt ned dette målet i en cyberpunk-verden til en liste over sub-rutiner: "%CONCEPT%".', 'action', 'et oppdrag'));
+                buttons.design.addEventListener('click', () => actionButtonHandler('Design et stykke cyberware basert på ønsket funksjon: "%CONCEPT%".', 'action', 'en funksjon'));
+                buttons.corpo.addEventListener('click', () => actionButtonHandler('Oversett følgende tekst til ugjennomtrengelig bedriftssjargong: "%CONCEPT%".', 'action', 'tekst for oversettelse'));
+            }
+            
+            // Initial Load
+            loadSettings();
+            setupEventListeners();
+        });
+    </script>
+</body>
+</html>
