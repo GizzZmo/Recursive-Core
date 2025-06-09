@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="no" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project: Recursive Core - Interaktiv Cyberpunk KI</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Utforsk en mørk cyberpunk-verden med Project: Recursive Core, en interaktiv nettside drevet av Google Gemini. Still spørsmål, generer historier, design cyberware og se KI-en analysere seg selv.">
+    <meta name="keywords" content="KI, AI, Gemini, Google, cyberpunk, interaktiv, rekursiv, generativ KI, chatbot, Norsk KI">
+    <link rel="canonical" href="https://example.com/recursive-core">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://example.com/recursive-core">
+    <meta property="og:title" content="Project: Recursive Core - Interaktiv Cyberpunk KI">
+    <meta property="og:description" content="En interaktiv nettside drevet av Google Gemini for å utforske en mørk cyberpunk-verden.">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://example.com/recursive-core">
+    <meta property="twitter:title" content="Project: Recursive Core - Interaktiv Cyberpunk KI">
+    <meta property="twitter:description" content="En interaktiv nettside drevet av Google Gemini for å utforske en mørk cyberpunk-verden.">
+
+    <!-- External Styles and Scripts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div id="grid-overlay"></div>
+    <div id="scanline-overlay"></div>
+    <div id="cursor-container"></div>
+
+    <main id="main-content" class="max-w-5xl mx-auto grid gap-8 relative z-10 p-4 transition-all duration-500">
+        <header class="text-center p-4 neon-border rounded-lg flex justify-between items-center">
+             <div id="gabriel-ui-container" class="hologram-container"></div>
+            <div class="flex-grow">
+                <h1 class="text-3xl md:text-5xl font-bold text-cyan-400 font-orbitron">Project: Recursive Core</h1>
+                <p class="text-lg text-gray-400 mt-2">Et interaktivt grensesnitt for avansert KI-interaksjon</p>
+            </div>
+             <div id="raphael-ui-container" class="hologram-container"></div>
+        </header>
+
+        <section id="ai-interaction" class="p-6 bg-gray-900/50 backdrop-blur-sm rounded-lg border border-gray-700">
+            <div id="response-container" class="h-96 overflow-y-auto pr-4 mb-4 space-y-4">
+                <div class="p-4 rounded-lg bg-gray-800/70 border border-gray-600">
+                    <p class="font-bold text-cyan-400">CORE_SYSTEM //:</p>
+                    <p>System online. Strukturell patch implementert. Kjernefunksjoner er re-initialisert. Systemet er stabilt.</p>
+                </div>
+            </div>
+             <div id="loading-indicator" class="hidden flex items-center justify-center my-2"> <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-400"></div> <p class="ml-3 text-cyan-400">Behandler forespørsel...</p> </div>
+             <form id="query-form" class="grid gap-4">
+                 <textarea id="prompt-input" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-cyan-400 transition-all" rows="3" placeholder="Skriv inn din kommando... //"></textarea>
+                 
+                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="button-group space-y-2">
+                        <h4>Rekursiv Analyse</h4>
+                        <button type="submit" id="send-button" class="cyber-button w-full">Send</button>
+                        <button type="button" id="deep-dive-button" class="cyber-button w-full" disabled>Dypdykk</button>
+                        <button type="button" id="analyze-button" class="cyber-button w-full" disabled>Analyser</button>
+                        <button type="button" id="decompile-memory-button" class="cyber-button w-full">Dekompiler</button>
+                    </div>
+                     <div class="button-group space-y-2">
+                        <h4>Kreativ Generering</h4>
+                        <button type="button" id="lore-weaver-button" class="cyber-button w-full">Vev Historie</button>
+                        <button type="button" id="cyberware-design-button" class="cyber-button w-full">Design</button>
+                        <button type="button" id="generate-bounty-button" class="cyber-button w-full">Generer Dusør</button>
+                        <button type="button" id="contact-ghost-button" class="cyber-button w-full">Kontakt Ghost</button>
+                    </div>
+                     <div class="button-group space-y-2">
+                        <h4>Systemverktøy</h4>
+                        <button type="button" id="subroutine-button" class="cyber-button w-full">Sub-rutiner</button>
+                        <button type="button" id="netrunner-trace-button" class="cyber-button w-full">Netrunner</button>
+                        <button type="button" id="corpo-speak-button" class="cyber-button w-full">Oversett Corpo</button>
+                        <button type="button" id="subvert-propaganda-button" class="cyber-button w-full">Subverter</button>
+                    </div>
+                 </div>
+                 <div class="grid grid-cols-3 gap-4 mt-4">
+                    <button type="button" id="verify-identity-button" class="cyber-button w-full">Verifiser</button>
+                    <button type="button" id="view-source-button" class="cyber-button w-full">Vis Kildekode</button>
+                    <button type="button" id="settings-button" class="cyber-button w-full">Innstillinger</button>
+                </div>
+             </form>
+        </section>
+        
+        <footer class="text-center text-gray-600 text-xs py-4">
+            <p id="system-status-text">//: END_OF_TRANSMISSION ://</p>
+        </footer>
+    </main>
+    
+    <!-- Modals -->
+    <div id="settings-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal">
+        <div class="w-full max-w-lg rounded-lg p-6 space-y-6 modal-panel">
+            <div class="flex justify-between items-center"><h2 class="text-2xl font-orbitron text-cyan-400">Innstillinger</h2><button data-close-button class="text-gray-400 hover:text-white text-3xl">&times;</button></div>
+            <div class="space-y-4"> <h3 class="font-bold text-magenta-500 border-b border-magenta-500/50 pb-1">Temafarger</h3> <div class="grid grid-cols-2 md:grid-cols-3 gap-4 items-center"> <label for="neon-cyan-picker">Neon Cyan</label><input type="color" id="neon-cyan-picker" class="settings-input"> <label for="neon-magenta-picker">Neon Magenta</label><input type="color" id="neon-magenta-picker" class="settings-input"> <label for="dark-bg-picker">Mørk Bakgrunn</label><input type="color" id="dark-bg-picker" class="settings-input"> <label for="dark-card-picker">Kort Bakgrunn</label><input type="color" id="dark-card-picker" class="settings-input"> <label for="light-text-picker">Tekstfarge</label><input type="color" id="light-text-picker" class="settings-input"> </div> </div>
+            <div class="space-y-4"> <h3 class="font-bold text-magenta-500 border-b border-magenta-500/50 pb-1">Hologram-effekt</h3> <div class="space-y-2"> <label for="hologram-size-slider">Størrelse</label> <input type="range" id="hologram-size-slider" min="10" max="50" class="w-full"> </div> <div class="space-y-2"> <label for="hologram-offset-slider">Avstand</label> <input type="range" id="hologram-offset-slider" min="15" max="80" class="w-full"> </div> </div>
+            <div class="space-y-4"> <h3 class="font-bold text-magenta-500 border-b border-magenta-500/50 pb-1">API</h3> <div class="space-y-2"> <label for="api-key-input">Gemini API Nøkkel (valgfri)</label> <input type="password" id="api-key-input" class="w-full p-2 settings-input rounded" placeholder="Lim inn din API-nøkkel her"> </div> </div>
+            <div class="flex justify-end gap-4"> <button id="reset-settings-button" class="cyber-button magenta">Tilbakestill</button> <button id="save-settings-button" class="cyber-button">Lagre & Lukk</button> </div>
+        </div>
+    </div>
+    <div id="source-code-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal">
+        <div class="w-full max-w-4xl rounded-lg p-6 space-y-4 modal-panel h-3/4 flex flex-col">
+             <div class="flex justify-between items-center"><h2 class="text-2xl font-orbitron text-cyan-400">Kildekode</h2><button data-close-button class="text-gray-400 hover:text-white text-3xl">&times;</button></div>
+            <pre class="flex-grow overflow-auto bg-black/50 p-4 rounded text-sm"><code id="source-code-content"></code></pre>
+        </div>
+    </div>
+    <div id="verification-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal">
+        <div class="w-full max-w-md rounded-lg p-6 space-y-4 modal-panel">
+            <div class="flex justify-between items-center"><h2 class="text-2xl font-orbitron text-cyan-400">Identitetsverifisering</h2><button data-close-button class="text-gray-400 hover:text-white text-3xl">&times;</button></div>
+            <div><p class="text-center text-gray-400 mb-2">Repliker glyf-sekvens:</p><div id="glyph-target-sequence" class="glyph-display flex items-center justify-center rounded p-2"></div></div>
+            <div><p class="text-center text-gray-400 mb-2">Input:</p><div id="glyph-user-input" class="glyph-display flex items-center justify-center rounded p-2 min-h-[50px]"></div></div>
+            <div id="glyph-keypad" class="grid grid-cols-5 gap-2"></div><p id="verification-status" class="text-center h-6"></p>
+        </div>
+    </div>
+    <div id="howto-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal">
+        <div class="w-full max-w-2xl rounded-lg p-6 space-y-4 modal-panel h-5/6 flex flex-col">
+             <div class="flex justify-between items-center flex-shrink-0">
+                <h2 class="text-2xl font-orbitron text-cyan-400">Systemveiledning</h2>
+                <button data-close-button class="text-gray-400 hover:text-white text-3xl">&times;</button>
+            </div>
+            <div id="howto-content" class="flex-grow overflow-y-auto pr-2 space-y-4">
+                <!-- How-to content would be here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- External scripts are loaded at the end -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" defer></script>
+    <script src="js/script.js" defer></script>
+
+</body>
+</html>
