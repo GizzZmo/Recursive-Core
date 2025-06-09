@@ -1,0 +1,118 @@
+/*
+ * Project: Recursive Core
+ * Filename: style.css
+ * Description: All custom CSS rules for the cyberpunk UI, including animations and theming.
+ */
+
+:root {
+    --neon-cyan: #00ffff;
+    --neon-magenta: #ff00ff;
+    --dark-bg: #0b0c10;
+    --dark-card: #1f2833;
+    --light-text: #c5c6c7;
+}
+
+body {
+    background-color: var(--dark-bg);
+    color: var(--light-text);
+    font-family: 'Share Tech Mono', monospace;
+    background-image: linear-gradient(rgba(11, 12, 16, 0.9), rgba(11, 12, 16, 0.9));
+    cursor: default;
+    overflow: hidden;
+}
+
+/* --- VISUAL UPGRADES --- */
+#grid-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    background-image: 
+        linear-gradient(var(--neon-cyan) 1px, transparent 1px),
+        linear-gradient(90deg, var(--neon-cyan) 1px, transparent 1px);
+    background-size: 50px 50px;
+    opacity: 0.08;
+    animation: pan-grid 60s linear infinite;
+}
+
+#scanline-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 10000;
+    pointer-events: none;
+    background: linear-gradient(0deg, rgba(11, 12, 16, 0) 0%, rgba(125, 255, 255, 0.05) 50%, rgba(11, 12, 16, 0) 100%);
+    animation: scanline 8s linear infinite;
+}
+
+@keyframes pan-grid {
+    from { background-position: 0 0; }
+    to { background-position: -50px -50px; }
+}
+@keyframes scanline {
+    from { background-position: 0 0; }
+    to { background-position: 0 100vh; }
+}
+@keyframes glitch-in {
+    0% { opacity: 0; transform: translateX(-20px); filter: blur(5px); }
+    60% { opacity: 0.7; transform: translateX(5px); filter: blur(2px); }
+    100% { opacity: 1; transform: translateX(0); filter: blur(0); }
+}
+.response-box-animated { animation: glitch-in 0.4s ease-out; }
+
+@keyframes flicker { 0%, 100% { opacity: 1; } 50% { opacity: 0.98; } 52% { opacity: 1; } 54% { opacity: 0.95; } 56% { opacity: 1; } }
+main { animation: flicker 5s linear infinite; }
+
+
+/* --- TYPOGRAPHY AND BORDERS --- */
+h1, h2, .font-orbitron {
+    font-family: 'Orbitron', sans-serif;
+    text-shadow: 0 0 5px var(--neon-cyan), 0 0 10px var(--neon-cyan), 0 0 15px var(--neon-cyan);
+}
+.neon-border { 
+    border: 2px solid;
+    border-image-slice: 1;
+    border-image-source: linear-gradient(to right, var(--neon-cyan), var(--neon-magenta));
+    box-shadow: 0 0 8px var(--neon-cyan), 0 0 12px var(--neon-magenta);
+}
+
+/* --- BUTTONS --- */
+.cyber-button { 
+    background-color: transparent; 
+    border: 1px solid var(--neon-cyan); 
+    color: var(--neon-cyan); 
+    padding: 8px 16px; 
+    transition: all 0.3s ease; 
+    text-transform: uppercase; 
+    font-size: 0.75rem; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 0.5rem; 
+}
+.cyber-button svg { width: 1rem; height: 1rem; }
+.cyber-button:hover:not(:disabled) { 
+    background-color: var(--neon-cyan); 
+    color: var(--dark-bg); 
+    box-shadow: 0 0 5px var(--neon-cyan), 0 0 10px var(--neon-cyan), 0 0 15px var(--neon-cyan); 
+}
+.cyber-button.processing { animation: pulse-border 1.5s infinite; }
+@keyframes pulse-border { 
+    0%, 100% { box-shadow: 0 0 5px var(--neon-cyan); } 
+    50% { box-shadow: 0 0 15px var(--neon-cyan), 0 0 20px var(--neon-cyan); } 
+}
+.cyber-button.magenta { border-color: var(--neon-magenta); color: var(--neon-magenta); }
+.cyber-button.magenta:hover:not(:disabled) { background-color: var(--neon-magenta); color: var(--dark-bg); box-shadow: 0 0 5px var(--neon-magenta), 0 0 10px var(--neon-magenta), 0 0 15px var(--neon-magenta); }
+
+/* --- MODALS --- */
+.modal { background-color: rgba(11, 12, 16, 0.8); backdrop-filter: blur(5px); }
+.modal-panel { background-color: var(--dark-card); border: 1px solid var(--neon-cyan); box-shadow: 0 0 15px var(--neon-cyan); }
+
+/* --- UI HOLOGRAMS --- */
+.hologram-container { width: 4rem; height: 4rem; }
+.hologram { width: 100%; height: 100%; will-change: opacity, filter; mix-blend-mode: screen; transition: opacity 0.3s ease-out, filter 0.3s ease; }
+.hologram svg { width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 0 4px currentColor); animation: pulse-holo 5s ease-in-out infinite; }
+@keyframes pulse-holo { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+
+main { height: 100vh; overflow-y: auto; }
+.button-group h4 { font-family: 'Orbitron', sans-serif; color: var(--light-text); font-size: 0.75rem; text-align: center; margin-bottom: 0.5rem; opacity: 0.6; }
