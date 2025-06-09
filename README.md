@@ -1,32 +1,33 @@
-Project: Recursive Core
-Et interaktivt web-grensesnitt for avanserte, rekursive interaksjoner med en KI, pakket inn i en mørk og mystisk cyberpunk-estetikk.
+## **Project: Recursive Core**
 
-Innholdsfortegnelse
-Om Prosjektet
+# Et interaktivt web-grensesnitt for avanserte, rekursive interaksjoner med en KI, pakket inn i en mørk og mystisk cyberpunk-estetikk.
 
-Funksjoner
+## Innholdsfortegnelse
+# Om Prosjektet
 
-Teknologi-stack
+# Funksjoner
 
-Kom i gang
+# Teknologi-stack
 
-Forutsetninger
+# Kom i gang
 
-Installasjon
+# Forutsetninger
 
-Bruk
+# Installasjon
 
-Bidra
+# Bruk
 
-Lisens
+# Bidra
 
-Om Prosjektet
+# Lisens
+
+## Om Prosjektet
 Project: Recursive Core er en webapplikasjon designet for å demonstrere avanserte interaksjoner med en generativ KI som Google Gemini. I stedet for enkle spørsmål og svar, oppfordrer grensesnittet til rekursive operasjoner hvor brukeren kan be KI-en om å utdype, analysere, eller transformere sine egne svar.
 
-Prosjektet er pakket inn i en cyberpunk-estetikk for å skape en immersiv og tematisk opplevelse.
+### Prosjektet er pakket inn i en cyberpunk-estetikk for å skape en immersiv og tematisk opplevelse.
 
-Funksjoner
-Interaktiv KI-Chat: Kommuniser direkte med CORE_SYSTEM.
+## Funksjoner
+## Interaktiv KI-Chat: Kommuniser direkte med CORE_SYSTEM.
 
 Rekursiv Analyse: Be KI-en om å "Dypdykke" eller "Analysere" sine egne svar.
 
@@ -60,7 +61,7 @@ En moderne nettleser som støtter ES6-moduler (Chrome, Firefox, Edge, etc.).
 Installasjon
 Klone repoet
 
-git clone https://github.com/dittbrukernavn/project-recursive-core.git
+git clone https://github.com/GizzZmo/Recursive-Core.git
 
 Naviger til prosjektmappen
 
