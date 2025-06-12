@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project: Recursive Core - Interaktiv Cyberpunk KI</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Utforsk en mørk cyberpunk-verden med Project: Recursive Core, en interaktiv nettside drevet av Google Gemini. Still spørsmål, generer historier, design cyberware og se KI-en analysere seg selv.">
+    <meta name="keywords" content="KI, AI, Gemini, Google, cyberpunk, interaktiv, rekursiv, generativ KI, chatbot, Norsk KI">
+    <link rel="canonical" href="https://example.com/recursive-core">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://example.com/recursive-core">
+    <meta property="og:title" content="Project: Recursive Core - Interaktiv Cyberpunk KI">
+    <meta property="og:description" content="En interaktiv nettside drevet av Google Gemini for å utforske en mørk cyberpunk-verden.">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://x.com/Jon_Arve">
+    <meta property="twitter:title" content="Project: Recursive Core - Interaktiv Cyberpunk KI">
+    <meta property="twitter:description" content="En interaktiv nettside drevet av Google Gemini for å utforske en mørk cyberpunk-verden.">
+
+
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts for Cyberpunk aesthetic -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+    <!-- Marked.js to render Markdown responses from API -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <style>
+        :root {
+            --neon-cyan: #00ffff;
+            --neon-magenta: #ff00ff;
+            --dark-bg: #0b0c10;
+            --dark-card: #1f2833;
+            --light-text: #c5c6c7;
+            --error-red: #ff3860;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(rgba(11, 12, 16, 0.9), rgba(11, 12, 16, 0.9));
+            z-index: -1;
+        }
+        body { background-color: var(--dark-bg); color: var(--light-text); font-family: 'Share Tech Mono', monospace; cursor: none; overflow: hidden; }
+        #grid-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; background-image: linear-gradient(var(--neon-cyan) 1px, transparent 1px), linear-gradient(90deg, var(--neon-cyan) 1px, transparent 1px); background-size: 50px 50px; opacity: 0.08; animation: pan-grid 60s linear infinite; will-change: background-position; }
+        #scanline-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10000; pointer-events: none; background: linear-gradient(0deg, rgba(11, 12, 16, 0) 0%, rgba(125, 255, 255, 0.05) 50%, rgba(11, 12, 16, 0) 100%); animation: scanline 8s linear infinite; will-change: background-position; }
+        #game-canvas { position: fixed; top: 0; left: 0; z-index: 5; pointer-events: none; }
+        @keyframes pan-grid { from { background-position: 0 0; } to { background-position: -50px -50px; } }
+        @keyframes scanline { from { background-position: 0 0; } to { background-position: 0 100vh; } }
+        @keyframes glitch-in { 0% { opacity: 0; transform: translateX(-20px); filter: blur(5px); } 60% { opacity: 0.7; transform: translateX(5px); filter: blur(2px); } 100% { opacity: 1; transform: translateX(0); filter: blur(0); } }
+        .response-box-animated { animation: glitch-in 0.4s ease-out; }
+        @keyframes flicker { 0%, 100% { opacity: 1; } 50% { opacity: 0.98; } 52% { opacity: 1; } 54% { opacity: 0.95; } 56% { opacity: 1; } }
+        .flicker-anim { animation: flicker 5s linear infinite; }
+        h1, h2, .font-orbitron { font-family: 'Orbitron', sans-serif; text-shadow: 0 0 5px var(--neon-cyan), 0 0 10px var(--neon-cyan), 0 0 15px var(--neon-cyan); }
+        .neon-border { 
+            border: 2px solid;
+            border-image-slice: 1;
+            border-image-source: linear-gradient(to right, var(--neon-cyan), var(--neon-magenta));
+            box-shadow: 0 0 8px var(--neon-cyan), 0 0 12px var(--neon-magenta);
+        }
+        .cyber-button { background-color: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 10px 20px; transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease; text-transform: uppercase; font-size: 0.8rem; }
+        .cyber-button:hover:not(:disabled) { background-color: var(--neon-cyan); color: var(--dark-bg); box-shadow: 0 0 5px var(--neon-cyan), 0 0 10px var(--neon-cyan), 0 0 15px var(--neon-cyan); }
+        .cyber-button.magenta { border-color: var(--neon-magenta); color: var(--neon-magenta); }
+        .cyber-button.magenta:hover:not(:disabled) { background-color: var(--neon-magenta); color: var(--dark-bg); box-shadow: 0 0 5px var(--neon-magenta), 0 0 10px var(--neon-magenta), 0 0 15px var(--neon-magenta); }
+        .cyber-button svg { width: 1.2em; height: 1.2em; margin-right: 0.5em; }
+        .cyber-button.icon-only svg { margin-right: 0; }
+        .modal { background-color: rgba(11, 12, 16, 0.8); backdrop-filter: blur(5px); }
+        .modal-panel { background-color: var(--dark-card); border: 1px solid var(--neon-cyan); box-shadow: 0 0 15px var(--neon-cyan); }
+        .settings-input { background-color: #0b0c10; border: 1px solid #4a5568; color: var(--light-text); }
+        input[type="color"] { -webkit-appearance: none; border: none; width: 48px; height: 24px; cursor: pointer; }
+        input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+        input[type="color"]::-webkit-color-swatch { border: 1px solid #4a5568; border-radius: 4px; }
+        .glyph-display { background-color: #0b0c10; border: 1px solid var(--neon-magenta); color: var(--neon-magenta); text-shadow: 0 0 5px var(--neon-magenta); letter-spacing: 0.5em; font-size: 1.5rem; height: 50px; }
+        .glyph-keypad button { background-color: var(--dark-card); border: 1px solid var(--neon-cyan); color: var(--neon-cyan); font-size: 1.5rem; transition: background-color 0.2s ease, color 0.2s ease; }
+        .glyph-keypad button:hover { background-color: var(--neon-cyan); color: var(--dark-bg); }
+        .verification-status.success { color: var(--neon-cyan); }
+        .verification-status.failure { color: var(--error-red); }
+        #howto-content h3 { font-family: 'Orbitron', sans-serif; color: var(--neon-magenta); margin-top: 1.5rem; margin-bottom: 0.5rem; border-bottom: 1px solid var(--neon-magenta); padding-bottom: 0.25rem; font-size: 1.25rem; }
+        #howto-content h4 { font-family: 'Orbitron', sans-serif; color: var(--neon-cyan); margin-top: 1rem; margin-bottom: 0.5rem; }
+        #howto-content p, #howto-content li { color: var(--light-text); line-height: 1.6; }
+        #howto-content ul { list-style-type: '⏔ '; padding-left: 1.5rem; }
+        #howto-content blockquote { border-left: 3px solid var(--neon-cyan); padding-left: 1rem; margin: 1rem 0.5rem; font-style: italic; color: var(--light-text); background: #00000030; padding-top: 0.5rem; padding-bottom: 0.5rem; }
+        #howto-content blockquote p { margin-bottom: 0; }
+        #howto-content strong, #howto-content code { color: var(--neon-cyan); background-color: #00000040; padding: 0.1rem 0.3rem; border-radius: 4px; }
+        #cursor-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 99999; }
+        .hologram { position: absolute; pointer-events: none; will-change: transform, opacity; mix-blend-mode: screen; transition: transform 0.2s ease-out, opacity 0.3s ease-out, width 0.3s ease-out, height 0.3s ease-out, filter 0.3s ease; }
+        .hologram svg { width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 0 4px currentColor); }
+        .cursor-main { position: absolute; width: 8px; height: 8px; background: var(--neon-magenta); border: 1px solid var(--neon-magenta); box-shadow: 0 0 5px var(--neon-magenta), 0 0 10px var(--neon-magenta); mix-blend-mode: lighten; transform: translate(-50%, -50%); border-radius: 50%; will-change: transform; }
+        #app-container { min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 1rem; }
+        #game-info { position: fixed; top: 1rem; left: 1rem; z-index: 100; color: var(--neon-cyan); font-family: 'Orbitron', sans-serif; text-shadow: 0 0 5px var(--neon-cyan); opacity: 0; transition: opacity 0.5s; pointer-events: none; }
+        #game-info.visible { opacity: 1; }
+        #radio-player { position: fixed; bottom: 1rem; right: 1rem; z-index: 100; background-color: rgba(11, 12, 16, 0.5); backdrop-filter: blur(3px); border: 1px solid var(--neon-cyan); padding: 0.5rem 1rem; font-family: 'Share Tech Mono', monospace; text-align: right; box-shadow: 0 0 10px var(--neon-cyan); }
+        #radio-player .frequency { color: var(--neon-magenta); font-family: 'Orbitron'; font-size: 1rem; }
+        #radio-player .artist { font-size: 0.8rem; color: var(--light-text); }
+        #radio-player .track-title { font-size: 0.9rem; color: var(--neon-cyan); text-shadow: 0 0 4px var(--neon-cyan); min-height: 1.2em; display: inline-block; }
+        #news-ticker-container { width:100%; border-top: 1px solid var(--neon-cyan); border-bottom: 1px solid var(--neon-cyan); background-color: #00000040; overflow: hidden; padding: 0.25rem 0; }
+        #news-ticker { display: flex; white-space: nowrap; animation: scroll-left 45s linear infinite; }
+        .ticker-item { margin-right: 80px; color: var(--light-text); }
+        .ticker-item strong { color: var(--neon-magenta); text-shadow: 0 0 3px var(--neon-magenta); }
+        @keyframes scroll-left { 0% { transform: translateX(0%); } 100% { transform: translateX(-50%); } }
+        
+        /* Thematic Source Code Viewer Styles */
+        #source-code-content { font-family: 'Share Tech Mono', monospace; background-color: #080a0c; color: #a9a9a9; white-space: pre-wrap; }
+        #source-code-content .sc-comment { color: #6a9955; font-style: italic; }
+        #source-code-content .sc-tag { color: var(--neon-magenta); }
+        #source-code-content .sc-attr-name { color: var(--neon-cyan); }
+        #source-code-content .sc-attr-value { color: #ce9178; }
+        #source-code-content .sc-js-keyword { color: #c586c0; }
+        #source-code-content .sc-js-func { color: #dcdcaa; }
+        #source-code-content .sc-js-string { color: #ce9178; }
+        /* Thematic Scrollbar */
+        pre::-webkit-scrollbar { width: 8px; }
+        pre::-webkit-scrollbar-track { background: #1a1a1a; }
+        pre::-webkit-scrollbar-thumb { background-color: var(--neon-cyan); border-radius: 4px; border: 2px solid #1a1a1a; }
+        pre::-webkit-scrollbar-thumb:hover { background-color: var(--neon-magenta); }
+
+    </style>
+</head>
+<body>
+
+    <div id="grid-overlay"></div>
+    <canvas id="game-canvas"></canvas>
+    <div id="scanline-overlay"></div>
+    <div id="cursor-container"></div>
+    <div id="game-info">SCORE: 0 <span class="text-magenta-500 ml-4">HIGH: 0</span></div>
+    <div id="radio-player">
+        <div class="frequency">Hellblazer Freq.</div>
+        <div class="artist">Artist: Jon Wing Chung Lee</div>
+        <div>Now Playing: <span id="track-title-span"></span></div>
+    </div>
+
+    <main id="app-container" class="flicker-anim">
+        <header class="w-full max-w-5xl text-center p-4 neon-border rounded-lg flex flex-col gap-4">
+             <div class="w-full flex justify-between items-center">
+                <button id="howto-button" class="text-cyan-400 hover:text-magenta-500 transition-colors" title="Systemveiledning">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                </button>
+                <div class="flex-grow">
+                    <h1 class="text-3xl md:text-5xl font-bold text-cyan-400 font-orbitron">Project: Recursive Core</h1>
+                    <p class="text-lg text-gray-400 mt-2">Et interaktivt grensesnitt for avansert KI-interaksjon</p>
+                </div>
+                <button id="settings-button" class="text-cyan-400 hover:text-magenta-500 transition-colors" title="Innstillinger">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                </button>
+             </div>
+             <div id="news-ticker-container">
+                <div id="news-ticker"></div>
+            </div>
+        </header>
+
+        <section id="ai-interaction" class="w-full max-w-5xl p-6 bg-gray-900/50 backdrop-blur-sm rounded-lg border border-gray-700">
+            <div id="response-container" class="h-96 overflow-y-auto pr-4 mb-4 space-y-4">
+                <div class="p-4 rounded-lg bg-gray-800/70 border border-gray-600">
+                    <p class="font-bold text-cyan-400">CORE_SYSTEM //:</p>
+                    <p>System online. Kjernevariabler re-initialisert. Datalink re-etablert. Systemet er stabilt.</p>
+                </div>
+            </div>
+             <div id="loading-indicator" class="hidden flex items-center justify-center my-2"> <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-400"></div> <p class="ml-3 text-cyan-400">Behandler forespørsel...</p> </div>
+             <form id="query-form" class="grid gap-4">
+                 <textarea id="prompt-input" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-cyan-400 transition-all" rows="3" placeholder="Skriv inn din kommando... //"></textarea>
+                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                    <button type="submit" id="send-button" class="cyber-button inline-flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>Send</button>
+                    <button type="button" id="deep-dive-button" class="cyber-button inline-flex items-center justify-center" disabled><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V2"/><path d="M12 14v-2"/><path d="M12 22v-2"/><path d="M17.6 15.9.8 8.1"/><path d="m19 12-2-2.5-2 2.5"/><path d="m5 12-2 2.5 2 2.5"/><path d="M6.4 15.9 19.2 8.1"/><circle cx="12" cy="12" r="10"/></svg>Dypdykk</button>
+                    <button type="button" id="analyze-button" class="cyber-button inline-flex items-center justify-center" disabled><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>Analyser</button>
+                    <button type="button" id="game-toggle-button" class="cyber-button magenta inline-flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 12 4.24 4.24-1.41 1.42-4.24-4.24-4.24 4.24-1.42-1.41L12 12z"/><path d="M12 2v4"/><path d="M12 22v-4"/><path d="M22 12h-4"/><path d="M4 12H2"/><path d="m19.07 4.93-1.41 1.41"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 19.07-1.41-1.41"/><path d="m6.34 6.34-1.41-1.41"/></svg>Datafangst</button>
+                    <button type="button" id="netrunner-trace-button" class="cyber-button inline-flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>Netrunner</button>
+                    <button type="button" id="lore-weaver-button" class="cyber-button inline-flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>Vev Historie</button>
+                    <button type="button" id="cyberware-design-button" class="cyber-button inline-flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>Design</button>
+                    <button type="button" id="corpo-speak-button" class="cyber-button inline-flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>Oversett</button>
+                    <button type="button" id="news-generator-button" class="cyber-button inline-flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg>Generer Nyheter</button>
+                    <button type="button" id="contact-ghost-button" class="cyber-button inline-flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 10h.01"/><path d="M15 10h.01"/><path d="M12 2a8 8 0 0 0-8 8v12l3-3 2.5 2.5L12 19l2.5 2.5L17 19l3 3V10a8 8 0 0 0-8-8z"/></svg>Kontakt Ghost</button>
+                    <button type="button" id="verify-identity-button" class="cyber-button inline-flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>Verifiser</button>
+                    <button type="button" id="subroutine-button" class="cyber-button inline-flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>Sub-rutiner</button>
+                    <button type="button" id="view-source-button" class="cyber-button col-span-2 sm:col-span-3 md:col-span-4 inline-flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>Vis Kildekode</button>
+                 </div>
+             </form>
+        </section>
+        
+        <footer class="w-full max-w-5xl text-center text-gray-600 text-xs py-4 space-y-1">
+            <p class="text-cyan-400/70 font-orbitron">A TRANSMISSION FROM: JON-ARVE CONSTANTINE GRØNSBERG-OVESEN</p>
+            <p>Recursive Core v3.0.5 - Layout integrity and robustness patch applied.</p>
+            <p>//: END_OF_TRANSMISSION ://</p>
+        </footer>
+    </main>
+    
+    <div id="settings-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal">
+        <div class="w-full max-w-lg rounded-lg p-6 space-y-6 modal-panel">
+            <div class="flex justify-between items-center"><h2 class="text-2xl font-orbitron text-cyan-400">Innstillinger</h2><button data-close-button class="text-gray-400 hover:text-white text-3xl">&times;</button></div>
+            <div class="space-y-4"> <h3 class="font-bold text-magenta-500 border-b border-magenta-500/50 pb-1">Temafarger</h3> <div class="grid grid-cols-2 md:grid-cols-3 gap-4 items-center"> <label for="neon-cyan-picker">Neon Cyan</label><input type="color" id="neon-cyan-picker" class="settings-input"> <label for="neon-magenta-picker">Neon Magenta</label><input type="color" id="neon-magenta-picker" class="settings-input"> <label for="dark-bg-picker">Mørk Bakgrunn</label><input type="color" id="dark-bg-picker" class="settings-input"> <label for="dark-card-picker">Kort Bakgrunn</label><input type="color" id="dark-card-picker" class="settings-input"> <label for="light-text-picker">Tekstfarge</label><input type="color" id="light-text-picker" class="settings-input"> </div> </div>
+            <div class="space-y-4"> <h3 class="font-bold text-magenta-500 border-b border-magenta-500/50 pb-1">Hologram-effekt</h3> <div class="space-y-2"> <label for="hologram-size-slider">Størrelse</label> <input type="range" id="hologram-size-slider" min="10" max="50" class="w-full"> </div> <div class="space-y-2"> <label for="hologram-offset-slider">Avstand</label> <input type="range" id="hologram-offset-slider" min="15" max="80" class="w-full"> </div> </div>
+            <div class="space-y-4"> <h3 class="font-bold text-magenta-500 border-b border-magenta-500/50 pb-1">API</h3> <div class="space-y-2"> <label for="api-key-input">Gemini API Nøkkel (valgfri)</label> <input type="password" id="api-key-input" class="w-full p-2 settings-input rounded" placeholder="Lim inn din API-nøkkel her"> </div> </div>
+            <div class="flex justify-end gap-4"> <button id="reset-settings-button" class="cyber-button magenta">Tilbakestill</button> <button id="save-settings-button" class="cyber-button">Lagre & Lukk</button> </div>
+        </div>
+    </div>
+    <div id="source-code-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal">
+        <div class="w-full max-w-4xl rounded-lg p-6 space-y-4 modal-panel h-3/4 flex flex-col">
+             <div class="flex justify-between items-center"><h2 class="text-2xl font-orbitron text-cyan-400">Kildekode</h2><button data-close-button class="text-gray-400 hover:text-white text-3xl">&times;</button></div>
+            <pre class="flex-grow overflow-auto bg-black/50 p-4 rounded"><code id="source-code-content"></code></pre>
+        </div>
+    </div>
+    <div id="verification-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal">
+        <div class="w-full max-w-md rounded-lg p-6 space-y-4 modal-panel">
+            <div class="flex justify-between items-center"><h2 class="text-2xl font-orbitron text-cyan-400">Identitetsverifisering</h2><button data-close-button class="text-gray-400 hover:text-white text-3xl">&times;</button></div>
+            <div><p class="text-center text-gray-400 mb-2">Repliker glyf-sekvens:</p><div id="glyph-target-sequence" class="glyph-display flex items-center justify-center rounded p-2"></div></div>
+            <div><p class="text-center text-gray-400 mb-2">Input:</p><div id="glyph-user-input" class="glyph-display flex items-center justify-center rounded p-2 min-h-[50px]"></div></div>
+            <div id="glyph-keypad" class="grid grid-cols-5 gap-2"></div><p id="verification-status" class="text-center h-6"></p>
+        </div>
+    </div>
+    <div id="howto-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal">
+        <div class="w-full max-w-2xl rounded-lg p-6 space-y-4 modal-panel h-5/6 flex flex-col">
+             <div class="flex justify-between items-center flex-shrink-0">
+                <h2 class="text-2xl font-orbitron text-cyan-400">Systemveiledning</h2>
+                <button data-close-button class="text-gray-400 hover:text-white text-3xl">&times;</button>
+            </div>
+            <div id="howto-content" class="flex-grow overflow-y-auto pr-4 space-y-4">
+                <h3>Velkommen til Project: Recursive Core</h3>
+                <p>Dette er et interaktivt grensesnitt designet for å kommunisere med en avansert, tematisk KI. Du er operatøren. Bruk kommandoene nedenfor for å utforske KI-ens muligheter.</p>
+
+                <h3>HUD-elementer</h3>
+                <h4>✨ Hellblazer Frequency</h4>
+                <p>En simulert piratradiostasjon som sender musikk fra artisten Jon Wing Chung Lee. Panelet viser nåværende "låt" som spilles.</p>
+
+                <h3>Spesialiserte Kommandoer</h3>
+                <p>Knappene gir deg tilgang til spesialiserte KI-funksjoner. Skriv inn et nøkkelord eller en setning i tekstfeltet, og klikk deretter på en av knappene for å forme KI-ens svar.</p>
+                
+                <h4>✨ Generer Nyheter</h4>
+                <p>Genererer en fersk nyhetsstrøm fra Neo-Kyotos 'Network 54'. Gir korte, dystopiske overskrifter om bedriftsintriger, teknologiske gjennombrudd og skyggeaktiviteter.</p>
+                <blockquote><p><strong>Input:</strong> (Ingen input nødvendig, bare klikk på knappen)</p></blockquote>
+
+                <h4>✨ Datafangst</h4>
+                <p>Aktiverer et minispill der du samler fallende 'data-skår' ved å klikke på dem med musepekeren. Hver skår gir poeng. En fin måte å teste reaksjonsevnen din på mens systemet er inaktivt.</p>
+                
+                <h3>Teknologistabel</h3>
+                <p>Dette prosjektet er bygget med følgende teknologier:</p>
+                <ul>
+                  <li><strong>HTML5 & Canvas API:</strong> Struktur, innhold og sanntidsgrafikk for minispillet.</li>
+                  <li><strong>Tailwind CSS:</strong> For rask, utility-first styling.</li>
+                  <li><strong>JavaScript (ES6+):</strong> For all interaktivitet, logikk og API-kall.</li>
+                  <li><strong>Google Gemini API:</strong> Den generative KI-motoren som driver svarene.</li>
+                  <li><strong>Marked.js:</strong> For å rendere Markdown-formaterte svar fra KI-en.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- App State & Constants ---
+            const defaultSettings = { colors: { '--neon-cyan': '#00ffff', '--neon-magenta': '#ff00ff', '--dark-bg': '#0b0c10', '--dark-card': '#1f2833', '--light-text': '#c5c6c7' }, hologram: { size: 25, offset: 30 }, api: { key: '' } };
+            let appSettings = {};
+            let lastAiResponse = "";
+            let currentIntent = 'neutral';
+            let hoverContext = 'default';
+            let animationFrameId;
+
+            // --- DOM Element Caching ---
+            const queryForm = document.getElementById('query-form');
+            const promptInput = document.getElementById('prompt-input');
+            const responseContainer = document.getElementById('response-container');
+            const loadingIndicator = document.getElementById('loading-indicator');
+            const cursorContainer = document.getElementById('cursor-container');
+            const allCyberButtons = document.querySelectorAll('.cyber-button');
+            const SVG_NS = "http://www.w3.org/2000/svg";
+
+            // --- Holographic Cursor System ---
+            let realMouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+            let smoothedMouse = { ...realMouse };
+            let lastMousePos = { ...realMouse };
+            const primaryCursor = document.createElement('div');
+            primaryCursor.className = 'cursor-main';
+            cursorContainer.appendChild(primaryCursor);
+            
+            const iconCache = {};
+            function getIconSVG(iconName) {
+                if (iconCache[iconName]) return iconCache[iconName].cloneNode(true);
+                const svg = document.createElementNS(SVG_NS, "svg");
+                svg.setAttribute("viewBox", "0 0 24 24");
+                svg.setAttribute("fill", "none");
+                svg.setAttribute("stroke", "currentColor");
+                svg.setAttribute("stroke-width", "1.5");
+                let pathData = "";
+                switch(iconName) {
+                    case 'document': pathData = "M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2zM9 7h6M9 11h6M9 15h4"; break;
+                    case 'wing': pathData = "M22 12c-3-2-6-3-9-3s-6 1-9 3c3 2 6 3 9 3s6-1 9-3zM3 12v0c0 2.5 4 4.5 9 4.5s9-2 9-4.5v0"; break;
+                    case 'code': 
+                        const p1 = document.createElementNS(SVG_NS, "polyline");
+                        p1.setAttribute("points", "16 18 22 12 16 6");
+                        svg.appendChild(p1);
+                        const p2 = document.createElementNS(SVG_NS, "polyline");
+                        p2.setAttribute("points", "8 6 2 12 8 18");
+                        svg.appendChild(p2);
+                        iconCache[iconName] = svg;
+                        return svg.cloneNode(true);
+                }
+                const path = document.createElementNS(SVG_NS, "path");
+                path.setAttribute("d", pathData);
+                svg.appendChild(path);
+                iconCache[iconName] = svg;
+                return svg.cloneNode(true);
+            }
+
+            function createAgent(type) {
+                const agentEl = document.createElement('div');
+                agentEl.className = 'hologram';
+                agentEl.style.color = type === 'gabriel' ? 'var(--neon-cyan)' : 'var(--neon-magenta)';
+                cursorContainer.appendChild(agentEl);
+                return { el: agentEl, size: 25, opacity: 0.8, currentIcon: '' };
+            }
+            const gabrielHologram = createAgent('gabriel');
+            const raphaelHologram = createAgent('raphael');
+            
+            function setAgentIcon(agent, iconType) {
+                if (agent.currentIcon === iconType) return;
+                agent.el.innerHTML = '';
+                agent.el.appendChild(getIconSVG(iconType));
+                agent.currentIcon = iconType;
+            }
+
+            // --- Main Animation Loop ---
+            function animate() {
+                smoothedMouse.x += (realMouse.x - smoothedMouse.x) * 0.2;
+                smoothedMouse.y += (realMouse.y - smoothedMouse.y) * 0.2;
+                primaryCursor.style.transform = `translate(${smoothedMouse.x}px, ${smoothedMouse.y}px)`;
+                
+                const dx = smoothedMouse.x - lastMousePos.x;
+                const dy = smoothedMouse.y - lastMousePos.y;
+                lastMousePos = { ...smoothedMouse };
+                const angle = Math.atan2(dy, dx) * (180 / Math.PI) + 90;
+
+                const finalContext = currentIntent !== 'neutral' ? currentIntent : hoverContext;
+                const baseSize = appSettings.hologram?.size || defaultSettings.hologram.size;
+                
+                setAgentIcon(raphaelHologram, 'wing');
+                setAgentIcon(gabrielHologram, (finalContext === 'source') ? 'code' : 'document');
+
+                if (finalContext === 'data' || finalContext === 'source') {
+                    gabrielHologram.size += (baseSize * 1.5 - gabrielHologram.size) * 0.1;
+                    raphaelHologram.size += (baseSize * 0.5 - raphaelHologram.size) * 0.1;
+                } else if (finalContext === 'action') {
+                    gabrielHologram.size += (baseSize * 0.5 - gabrielHologram.size) * 0.1;
+                    raphaelHologram.size += (baseSize * 1.5 - raphaelHologram.size) * 0.1;
+                } else {
+                    gabrielHologram.size += (baseSize - gabrielHologram.size) * 0.1;
+                    raphaelHologram.size += (baseSize - raphaelHologram.size) * 0.1;
+                }
+                
+                const offset = appSettings.hologram?.offset || defaultSettings.hologram.offset;
+                const gabrielX = smoothedMouse.x - offset;
+                const gabrielY = smoothedMouse.y - offset;
+                const raphaelX = smoothedMouse.x + offset;
+                const raphaelY = smoothedMouse.y + offset;
+                
+                gabrielHologram.el.style.width = `${gabrielHologram.size}px`;
+                gabrielHologram.el.style.height = `${raphaelHologram.size}px`;
+                raphaelHologram.el.style.width = `${raphaelHologram.size}px`;
+                raphaelHologram.el.style.height = `${raphaelHologram.size}px`;
+                gabrielHologram.el.style.transform = `translate(${gabrielX - gabrielHologram.size/2}px, ${gabrielY - gabrielHologram.size/2}px) rotate(${angle}deg)`;
+                raphaelHologram.el.style.transform = `translate(${raphaelX - raphaelHologram.size/2}px, ${raphaelY - raphaelHologram.size/2}px) rotate(${angle}deg)`;
+
+                animationFrameId = requestAnimationFrame(animate);
+            }
+            
+            // Throttled hover context check
+            setInterval(() => {
+                const elUnderCursor = document.elementFromPoint(realMouse.x, realMouse.y);
+                if (!elUnderCursor) { hoverContext = 'default'; return; }
+                if (elUnderCursor.closest('#response-container')) hoverContext = 'data';
+                else if (elUnderCursor.closest('#query-form')) hoverContext = 'action';
+                else if (elUnderCursor.closest('#view-source-button')) hoverContext = 'source';
+                else hoverContext = 'default';
+            }, 100); 
+
+            // --- Verification System ---
+            const verificationModal = document.getElementById('verification-modal');
+            const glyphs = ['⏔', '⍜', '⍙', '⍴', '⏣', '⍺', '⍼', '⍳', '⍸', '⌬'];
+            let targetSequence = [];
+            let userSequence = [];
+
+            function startVerification() {
+                targetSequence = Array.from({length: 4}, () => glyphs[Math.floor(Math.random() * glyphs.length)]);
+                userSequence = [];
+                document.getElementById('glyph-target-sequence').textContent = targetSequence.join('');
+                document.getElementById('glyph-user-input').textContent = '';
+                document.getElementById('verification-status').textContent = '';
+                const keypad = document.getElementById('glyph-keypad');
+                keypad.innerHTML = '';
+                const fragment = document.createDocumentFragment();
+                glyphs.forEach(glyph => {
+                    const button = document.createElement('button');
+                    button.textContent = glyph;
+                    button.onclick = () => handleGlyphClick(glyph);
+                    fragment.appendChild(button);
+                });
+                keypad.appendChild(fragment);
+                verificationModal.classList.remove('hidden');
+            }
+
+            function handleGlyphClick(glyph) {
+                if (userSequence.length >= 4) return;
+                userSequence.push(glyph);
+                document.getElementById('glyph-user-input').textContent = userSequence.join('');
+                if (userSequence.length === 4) checkVerification();
+            }
+
+            function checkVerification() {
+                const statusEl = document.getElementById('verification-status');
+                const success = JSON.stringify(userSequence) === JSON.stringify(targetSequence);
+                statusEl.textContent = success ? 'IDENTITET VERIFISERT' : 'VERIFISERING FEITET. PRØV IGJEN.';
+                statusEl.className = `verification-status ${success ? 'success' : 'failure'}`;
+                setTimeout(() => {
+                    if (success) {
+                        verificationModal.classList.add('hidden');
+                    } else {
+                        userSequence = [];
+                        document.getElementById('glyph-user-input').textContent = '';
+                        statusEl.textContent = '';
+                    }
+                }, success ? 1500 : 2000);
+            }
+            
+            // --- Data Shard Minigame ---
+            const gameCanvas = document.getElementById('game-canvas');
+            const gameInfo = document.getElementById('game-info');
+            const ctx = gameCanvas.getContext('2d');
+            let isGameRunning = false;
+            let gameAnimationId;
+            let shards = [];
+            let score = 0;
+            let highScore = localStorage.getItem('coreHighScore') || 0;
+
+            class DataShard {
+                constructor() {
+                    this.x = Math.random() * gameCanvas.width;
+                    this.y = -20;
+                    this.size = Math.random() * 10 + 5;
+                    this.speed = Math.random() * 2 + 1;
+                    this.color = Math.random() > 0.5 ? 'var(--neon-cyan)' : 'var(--neon-magenta)';
+                }
+                update() { this.y += this.speed; }
+                draw() {
+                    ctx.fillStyle = this.color;
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = this.color;
+                    ctx.beginPath();
+                    ctx.moveTo(this.x, this.y);
+                    ctx.lineTo(this.x + this.size, this.y + this.size);
+                    ctx.lineTo(this.x - this.size, this.y + this.size);
+                    ctx.closePath();
+                    ctx.fill();
+                }
+            }
+            
+            function updateGameInfo() {
+                 gameInfo.innerHTML = `SCORE: ${score} <span class="text-magenta-500 ml-4">HIGH: ${highScore}</span>`;
+            }
+
+            function gameLoop() {
+                ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+                if (Math.random() < 0.05) shards.push(new DataShard());
+
+                shards.forEach((shard, index) => {
+                    shard.update();
+                    shard.draw();
+                    if (shard.y > gameCanvas.height) shards.splice(index, 1);
+                });
+                
+                ctx.shadowBlur = 0; // Reset shadow for next frame
+                gameAnimationId = requestAnimationFrame(gameLoop);
+            }
+
+            function handleCanvasClick(event) {
+                if (!isGameRunning) return;
+                const rect = gameCanvas.getBoundingClientRect();
+                const clickX = event.clientX - rect.left;
+                const clickY = event.clientY - rect.top;
+
+                for (let i = shards.length - 1; i >= 0; i--) {
+                    const shard = shards[i];
+                    const distance = Math.sqrt(Math.pow(clickX - shard.x, 2) + Math.pow(clickY - (shard.y + shard.size / 2), 2));
+                    if (distance < shard.size * 1.5) {
+                        shards.splice(i, 1);
+                        score++;
+                        updateGameInfo();
+                        break; // Collect one at a time
+                    }
+                }
+            }
+            
+            function toggleGame() {
+                isGameRunning = !isGameRunning;
+                if (isGameRunning) {
+                    gameCanvas.style.pointerEvents = 'auto';
+                    score = 0;
+                    shards = [];
+                    updateGameInfo();
+                    gameInfo.classList.add('visible');
+                    resizeCanvas();
+                    gameLoop();
+                } else {
+                    gameCanvas.style.pointerEvents = 'none';
+                    gameInfo.classList.remove('visible');
+                    cancelAnimationFrame(gameAnimationId);
+                    ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+                    if(score > highScore) {
+                        highScore = score;
+                        localStorage.setItem('coreHighScore', highScore);
+                    }
+                }
+            }
+            
+            function resizeCanvas() {
+                gameCanvas.width = window.innerWidth;
+                gameCanvas.height = window.innerHeight;
+            }
+            
+            window.addEventListener('resize', resizeCanvas);
+            gameCanvas.addEventListener('click', handleCanvasClick); // More specific event listener
+
+            // --- Hellblazer Frequency Radio ---
+            const trackTitleSpan = document.getElementById('track-title-span');
+            const soundcloudTracks = [
+                "The Becoming", "The Fever", "Digital Serenity", 
+                "Catharsis", "Dreamstate", "Mind Games", "Exit Protocol"
+            ];
+
+            function updateRadio() {
+                const track = soundcloudTracks[Math.floor(Math.random() * soundcloudTracks.length)];
+                trackTitleSpan.style.animation = 'glitch-in 0.3s ease-out';
+                trackTitleSpan.textContent = track;
+                setTimeout(() => trackTitleSpan.style.animation = '', 300);
+            }
+            
+            setInterval(updateRadio, 15000); // Change track every 15 seconds
+
+            // --- News Ticker ---
+            const ticker = document.getElementById('news-ticker');
+            const tips = [
+                "<strong>TIPS:</strong> Kjernebrikken din overopphetes? Prøv en nitrogenkjølt heatsink.",
+                "<strong>NYHETER:</strong> Arasaka Corp aksjer stuper etter datainnbrudd i sektor 7.",
+                "<strong>ADVARSEL:</strong> Ulovlig 'Black Ice' KI oppdaget i det gamle nettet. Unngå alle ukjente noder.",
+                "<strong>TIPS:</strong> Trenger du raske euro-dollar? Kontakt en 'Fixer' i de nedre distriktene, men vær forsiktig.",
+                "<strong>NYHETER:</strong> Militech avduker ny 'Chimera' kamp-cyberware, lover 'forbedret urban fredsbevaring'.",
+                "<strong>TIPS:</strong> 'Hellblazer Frequency' er den beste piratradioen for ekte musikk. Du hører på den nå."
+            ];
+
+            function populateTicker() {
+                if(!ticker) return;
+                ticker.innerHTML = '';
+                const fragment = document.createDocumentFragment();
+                [...tips, ...tips].forEach(tipText => {
+                    const item = document.createElement('span');
+                    item.className = 'ticker-item';
+                    item.innerHTML = tipText;
+                    fragment.appendChild(item);
+                });
+                ticker.appendChild(fragment);
+            }
+
+            // --- Settings & Modal Logic ---
+            const settingsModal = document.getElementById('settings-modal');
+            const sourceCodeModal = document.getElementById('source-code-modal');
+            const howtoModal = document.getElementById('howto-modal');
+            
+            function formatSourceCode(html) {
+                let formatted = html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                formatted = formatted.replace(/(&lt;!--[\s\S]*?--&gt;)/g, '<span class="sc-comment">$1</span>');
+                formatted = formatted.replace(/(&lt;script&gt;[\s\S]*?&lt;\/script&gt;)/g, (match) => {
+                    return match
+                        .replace(/(let|const|var|function|if|else|switch|case|return|async|await|try|catch|finally|for|new|document|window|document|console|true|false|null)/g, '<span class="sc-js-keyword">$1</span>')
+                        .replace(/(\w+)\s*(?=\()/g, '<span class="sc-js-func">$1</span>')
+                        .replace(/('.*?'|".*?"|`.*?`)/g, '<span class="sc-js-string">$1</span>');
+                });
+                formatted = formatted.replace(/(&lt;\/?)([\w-]+)|([\w-]+)=|(".*?")/g, (match, tagStart, tagName, attrName, attrValue) => {
+                    if (tagStart) return `${tagStart}<span class="sc-tag">${tagName}</span>`;
+                    if (attrName) return `<span class="sc-attr-name">${attrName}</span>=`;
+                    if (attrValue) return `<span class="sc-attr-value">${attrValue}</span>`;
+                    return match;
+                });
+                return formatted;
+            }
+
+            function setupModalTriggers() {
+                const buttons = {
+                    settings: document.getElementById('settings-button'),
+                    howto: document.getElementById('howto-button'),
+                    viewSource: document.getElementById('view-source-button'),
+                    verify: document.getElementById('verify-identity-button'),
+                    close: document.querySelectorAll('[data-close-button]')
+                };
+
+                if (buttons.settings) buttons.settings.addEventListener('click', () => settingsModal.classList.remove('hidden'));
+                if (buttons.howto) buttons.howto.addEventListener('click', () => howtoModal.classList.remove('hidden'));
+                if (buttons.viewSource) {
+                     buttons.viewSource.addEventListener('click', () => {
+                        const sourceCodeEl = document.getElementById('source-code-content');
+                        if(sourceCodeEl) {
+                           const rawHtml = document.documentElement.outerHTML;
+                           sourceCodeEl.innerHTML = formatSourceCode(rawHtml);
+                           sourceCodeModal.classList.remove('hidden');
+                        }
+                    });
+                }
+                if (buttons.verify) buttons.verify.addEventListener('click', startVerification);
+                buttons.close.forEach(button => {
+                    button.addEventListener('click', () => button.closest('.modal').classList.add('hidden'));
+                });
+            }
+
+            const saveSettingsButton = document.getElementById('save-settings-button');
+            const resetSettingsButton = document.getElementById('reset-settings-button');
+            const colorPickers = { '--neon-cyan': document.getElementById('neon-cyan-picker'), '--neon-magenta': document.getElementById('neon-magenta-picker'), '--dark-bg': document.getElementById('dark-bg-picker'), '--dark-card': document.getElementById('dark-card-picker'), '--light-text': document.getElementById('light-text-picker') };
+            const hologramSizeSlider = document.getElementById('hologram-size-slider');
+            const hologramOffsetSlider = document.getElementById('hologram-offset-slider');
+            const apiKeyInput = document.getElementById('api-key-input');
+
+            function applySettings(settings) {
+                Object.entries(settings.colors).forEach(([key, value]) => {
+                    document.documentElement.style.setProperty(key, value);
+                });
+                appSettings = settings;
+            }
+
+            function updateInputsFromSettings(settings) {
+                Object.entries(colorPickers).forEach(([key, picker]) => picker.value = settings.colors[key]);
+                hologramSizeSlider.value = settings.hologram.size;
+                hologramOffsetSlider.value = settings.hologram.offset;
+                apiKeyInput.value = settings.api.key;
+            }
+
+            function loadSettings() {
+                const savedSettings = localStorage.getItem('coreSettings');
+                const settingsToApply = savedSettings ? JSON.parse(savedSettings) : defaultSettings;
+                applySettings(settingsToApply);
+                updateInputsFromSettings(settingsToApply);
+            }
+            
+            if (saveSettingsButton) {
+                saveSettingsButton.addEventListener('click', () => {
+                    const currentSettings = {
+                        colors: Object.fromEntries(Object.entries(colorPickers).map(([key, picker]) => [key, picker.value])),
+                        hologram: { size: parseInt(hologramSizeSlider.value, 10), offset: parseInt(hologramOffsetSlider.value, 10) },
+                        api: { key: apiKeyInput.value.trim() }
+                    };
+                    localStorage.setItem('coreSettings', JSON.stringify(currentSettings));
+                    applySettings(currentSettings);
+                    settingsModal.classList.add('hidden');
+                });
+            }
+            
+            if(resetSettingsButton) {
+                resetSettingsButton.addEventListener('click', () => {
+                    localStorage.removeItem('coreSettings');
+                    applySettings(defaultSettings);
+                    updateInputsFromSettings(defaultSettings);
+                });
+            }
+            
+            // --- Core AI & DOM Manipulation ---
+            async function askGemini(prompt, intent = 'neutral') {
+                currentIntent = intent;
+                loadingIndicator.classList.remove('hidden');
+                allCyberButtons.forEach(b => b.disabled = true);
+                promptInput.disabled = true;
+
+                const userApiKey = appSettings.api?.key || '';
+                const apiKey = userApiKey;
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                const taggedPrompt = `${prompt}\n\nAvslutt svaret ditt med en linje som starter med "Tags:" etterfulgt av 3-4 relevante hashtags. Sørg for at taggen #core_system ALLTID er inkludert.`;
+                const payload = { contents: [{ role: "user", parts: [{ text: taggedPrompt }] }] };
+
+                try {
+                    const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                    if (!response.ok) {
+                        const err = await response.json();
+                        throw new Error(err.error?.message || `API Error: ${response.status}`);
+                    }
+                    const result = await response.json();
+                    const aiText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                    if (aiText) {
+                        lastAiResponse = aiText;
+                        addResponseToContainer(aiText, "CORE_SYSTEM");
+                        document.getElementById('deep-dive-button').disabled = false;
+                        document.getElementById('analyze-button').disabled = false;
+                    } else {
+                        throw new Error("Mottok et uventet format fra KI-en.");
+                    }
+                } catch (error) {
+                    console.error("Feil under API-kall:", error);
+                    addResponseToContainer(`SYSTEM_ERROR //: ${error.message}.`, "ERROR", true);
+                } finally {
+                    loadingIndicator.classList.add('hidden');
+                    promptInput.disabled = false;
+                    allCyberButtons.forEach(b => {
+                        if (b.id !== 'deep-dive-button' && b.id !== 'analyze-button') b.disabled = false;
+                    });
+                    if (!lastAiResponse) {
+                        document.getElementById('deep-dive-button').disabled = true;
+                        document.getElementById('analyze-button').disabled = true;
+                    }
+                    setTimeout(() => { currentIntent = 'neutral'; }, 2000);
+                }
+            }
+            
+            function addResponseToContainer(text, sender, isError = false) {
+                const fragment = document.createDocumentFragment();
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `p-4 rounded-lg bg-gray-800/70 border response-box-animated ${isError ? 'border-[var(--error-red)]' : 'border-gray-600'}`;
+                
+                let mainText = text;
+                const tagRegex = /\nTags:(.*)$/im;
+                const match = text.match(tagRegex);
+                if (match && match[1]) {
+                    mainText = text.replace(tagRegex, '').trim();
+                }
+
+                messageDiv.innerHTML = `
+                    <div class="flex justify-between items-center mb-2">
+                        <p class="font-bold ${isError ? 'text-[var(--error-red)]' : 'text-cyan-400'}">${sender} //:</p>
+                        ${(sender === 'CORE_SYSTEM' && !isError) ? '<button class="copy-button text-xs opacity-60 hover:opacity-100 transition-opacity">Kopier</button>' : ''}
+                    </div>
+                    <div class="response-content">${marked.parse(mainText)}</div>
+                `;
+
+                if (match && match[1] && !isError) {
+                    const tagsContainer = document.createElement('div');
+                    tagsContainer.className = 'mt-4 pt-3 border-t border-gray-700/50 flex flex-wrap gap-2 tag-container';
+                    match[1].trim().split(/\s+/).filter(tag => tag.startsWith('#')).forEach(tag => {
+                        const tagElement = document.createElement('span');
+                        tagElement.className = 'ai-tag inline-block text-xs font-semibold px-2.5 py-1 rounded-full bg-gray-700 hover:bg-cyan-800 transition-colors cursor-pointer';
+                        tagElement.textContent = tag;
+                        tagElement.onclick = () => {
+                            addResponseToContainer(`Kommando: Utforsk tag '${tag}'`, "USER");
+                            askGemini(`Fortell meg mer om konseptet bak taggen: ${tag}`, 'data');
+                        };
+                        tagsContainer.appendChild(tagElement);
+                    });
+                    messageDiv.appendChild(tagsContainer);
+                }
+
+                fragment.appendChild(messageDiv);
+                responseContainer.appendChild(fragment);
+
+                const copyButton = messageDiv.querySelector('.copy-button');
+                if (copyButton) {
+                    copyButton.onclick = () => copyTextToClipboard(text, copyButton);
+                }
+                
+                responseContainer.scrollTop = responseContainer.scrollHeight;
+            }
+
+            function copyTextToClipboard(text, button) {
+                const textArea = document.createElement("textarea");
+                textArea.value = text;
+                textArea.style.position = "fixed";
+                textArea.style.opacity = "0";
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    const originalText = button.textContent;
+                    button.textContent = 'Kopiert!';
+                    setTimeout(() => { button.textContent = originalText; }, 2000);
+                } catch (err) {
+                    console.error('Kunne ikke kopiere tekst: ', err);
+                }
+                document.body.removeChild(textArea);
+            }
+
+            // --- Event Listener Setup ---
+            function setupEventListeners() {
+                if (queryForm) {
+                    queryForm.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        const p = promptInput.value.trim();
+                        if(p){
+                            addResponseToContainer(p, "USER");
+                            promptInput.value = "";
+                            askGemini(p, 'data');
+                        }
+                    });
+                }
+
+                const actionButtonHandler = (promptTemplate, intent, errorMsg, userMsg) => () => {
+                    const concept = promptInput.value.trim();
+                    if (concept) {
+                        const p = promptTemplate.replace('%CONCEPT%', concept);
+                        addResponseToContainer(`Kommando: ${userMsg} for "${concept}"`, "USER");
+                        promptInput.value = "";
+                        askGemini(p, intent);
+                    } else {
+                        addResponseToContainer(`SYSTEM_VARSEL //: Vennligst skriv inn ${errorMsg}.`, "ERROR", true);
+                    }
+                };
+                
+                const eventMap = {
+                    'deep-dive-button': () => { if(lastAiResponse){ const p = `Ta følgende tekst og dykk dypere: "${lastAiResponse.split(/\nTags:/)[0]}"`; addResponseToContainer("Kommando: Dypdykk", "USER"); askGemini(p, 'data'); } },
+                    'analyze-button': () => { if(lastAiResponse){ const p = `Utfør en metakognitiv analyse av: "${lastAiResponse.split(/\nTags:/)[0]}"`; addResponseToContainer("Kommando: Analyser", "USER"); askGemini(p, 'data'); } },
+                    'game-toggle-button': toggleGame,
+                    'news-generator-button': () => { const prompt = "Du er nyhetstickeret for 'Network 54' i Neo-Kyoto. Generer 3-4 korte, dystopiske cyberpunk-nyhetsoverskrifter. Hold dem korte og slagkraftige."; addResponseToContainer("Kommando: Hent nyhetsstrøm...", "USER"); askGemini(prompt, 'data'); },
+                    'netrunner-trace-button': actionButtonHandler('Du er en Netrunner-KI. Generer en fiktiv, trinnvis sporing gjennom nettet til målet: "%CONCEPT%".', 'data', 'et mål', 'Start sporing'),
+                    'lore-weaver-button': actionButtonHandler('Jeg trenger bakgrunnsinformasjon ("lore") for et konsept i en mørk cyberpunk-verden: "%CONCEPT%".', 'action', 'et konsept', 'Vev historie'),
+                    'subroutine-button': actionButtonHandler('Bryt ned dette målet i en cyberpunk-verden til en liste over sub-rutiner: "%CONCEPT%".', 'action', 'et oppdrag', 'Generer sub-rutiner'),
+                    'cyberware-design-button': actionButtonHandler('Design et stykke cyberware basert på ønsket funksjon: "%CONCEPT%".', 'action', 'en funksjon', 'Design cyberware'),
+                    'corpo-speak-button': actionButtonHandler('Oversett følgende tekst til ugjennomtrengelig bedriftssjargong: "%CONCEPT%".', 'action', 'tekst for oversettelse', 'Oversett melding'),
+                    'contact-ghost-button': actionButtonHandler('Du er en "Ghost in the Machine,". Svar på følgende bruker-input fra dette perspektivet: "%CONCEPT%"', 'data', 'et spørsmål til tomrommet', 'Kontakt en "Ghost"')
+                };
+
+                for (const [id, handler] of Object.entries(eventMap)) {
+                    const button = document.getElementById(id);
+                    if (button) {
+                        button.addEventListener('click', handler);
+                    } else {
+                        console.warn(`[SYSTEM_WARN] Finner ikke element med ID: ${id}. Event listener ikke lagt til.`);
+                    }
+                }
+            
+                window.addEventListener('mousemove', e => { realMouse.x = e.clientX; realMouse.y = e.clientY; }, { passive: true });
+            }
+            
+            // --- Initial Load ---
+            updateGameInfo(); // Set initial high score text
+            updateRadio(); // Set initial radio track
+            populateTicker(); // Populate the news ticker
+            loadSettings();
+            setupEventListeners();
+            setupModalTriggers();
+            animate();
+        });
+    </script>
+</body>
+</html>
