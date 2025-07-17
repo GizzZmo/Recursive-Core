@@ -1,3 +1,5 @@
+https://github.com/GizzZmo/Recursive-Core/blob/main/Google_AI_Studio_2025-07-17T15_54_36.206Z.png
+
 # **Project: Recursive Core**
 
 ## Et interaktivt web-grensesnitt for avanserte, rekursive interaksjoner med en KI, pakket inn i en mørk og mystisk cyberpunk-estetikk.
